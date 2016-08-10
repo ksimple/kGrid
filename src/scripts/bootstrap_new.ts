@@ -3,14 +3,16 @@ require.config({
         'css': 'css' // or whatever the path to require-css is
     },
 
-    baseUrl: '.',
+    baseUrl: '../../',
 
     paths: {
-        jquery: 'lib/jquery/jquery',
-        jqueryui: 'lib/jquery-ui/jquery-ui',
+        jquery: 'lib/bower/jquery/jquery',
+        jqueryui: 'lib/bower/jquery-ui/jquery-ui',
         Bootstrap: 'lib/bootstrap/js/bootstrap.min',
-        css: 'lib/require-css/css',
+        css: 'lib/bower/require-css/css',
         // DataPicker: 'lib/pickadate/picker.date',
+        listcontrol: 'build/js/dev/listcontrol',
+        enhancedlistcontrol: 'build/js/dev/enhancedlistcontrol',
     },
     shim: {
         'jqueryui': {
@@ -18,19 +20,19 @@ require.config({
                 'css!lib/jquery-ui.css',
             ],
         },
-        'js/listcontrol': {
+        listcontrol: {
             exports: 'Microsoft.Office.Controls',
             deps: [
                 'jquery',
-                'css!assets/css/listcontrol.css',
+                'css!build/assets/css/listcontrol.css',
             ],
         },
-        'js/enhancedlistcontrol': {
+        enhancedlistcontrol: {
             exports: 'Microsoft.Office.Controls',
             deps: [
                 'jquery',
-                'js/listcontrol',
-                'css!assets/css/enhancedlistcontrol.css',
+                'listcontrol',
+                'css!build/assets/css/enhancedlistcontrol.css',
             ],
         },
         // DataPicker: {
@@ -56,7 +58,7 @@ require.config({
     }
 });
 
-require(['js/listcontrol', /* 'js/enhancedlistcontrol' */, /* 'DataPicker' */, 'jqueryui', 'Bootstrap'], function (listcontrol) {
+require(['listcontrol', /* 'js/enhancedlistcontrol' */, /* 'DataPicker' */, 'jqueryui', 'Bootstrap'], function (listcontrol) {
     var columnCount = 1000;
 
     // var testData = [
