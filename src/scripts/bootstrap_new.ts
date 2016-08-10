@@ -3,7 +3,7 @@ require.config({
         'css': 'css' // or whatever the path to require-css is
     },
 
-    baseUrl: '../../',
+    baseUrl: '.',
 
     paths: {
         jquery: 'lib/bower/jquery/jquery',
