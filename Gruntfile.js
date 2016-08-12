@@ -206,6 +206,7 @@ module.exports = function(grunt) {
                     'src/scripts/fundamental/ErrorUtil.p.ts',
                     'src/scripts/fundamental/EventAttacher.p.ts',
                     'src/scripts/fundamental/EventSite.p.ts',
+                    'src/scripts/fundamental/Logger.p.ts',
                     'src/scripts/fundamental/IDisposable.p.ts',
                     'src/scripts/fundamental/IFeature.p.ts',
                     'src/scripts/fundamental/PropertyBag.p.ts',

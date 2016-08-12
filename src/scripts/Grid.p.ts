@@ -12,7 +12,7 @@ export class Grid {
         this._features = {};
 
         if (!features) {
-            features = [new GridUIOperator(), new GridPosition(), new GridRender(), new GridSelection(), new GridMouseSelect()];
+            features = [new GridUIOperator(), new GridPosition(), new GridRender(), new GridSelection(), new GridMouseSelect(), new GridReorderColumn()];
         }
 
         if (!$invoke) {
