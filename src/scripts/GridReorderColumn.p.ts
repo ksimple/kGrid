@@ -49,9 +49,11 @@ class GridReorderColumn implements Fundamental.IFeature {
     private _startReorderColumn(name, cellPosition, event) {
         var isTouch = Microsoft.Office.Controls.Fundamental.BrowserDetector.isTouchEvent(event.type),
             pointerId = Microsoft.Office.Controls.Fundamental.BrowserDetector.getChangedPointerIdentifier(event)[0],
-            coordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromEvent(this._runtime.direction.rtl(), event)[pointerId];
+            coordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromEvent(this._runtime.direction.rtl(), event)[pointerId],
+            headerCellElement = this._viewportService.getCellElementByEvent(event),
+            headerCellPosition = this._viewportService.getCellPositionByEvent(event);
 
-        return this._operatorService.start(name, new GridReorderColumnOperation(isTouch, pointerId, coordinate))
+        return this._operatorService.start(name, new GridReorderColumnOperation(isTouch, pointerId, coordinate, headerCellElement, headerCellPosition.position.columnIndex))
         .done((oldColumnIndex, newColumnIndex) => {
             // if (oldColumnIndex == 0 || newColumnIndex == 0) {
             //     var headerCellElement = this.getHeaderCellElement(this._visibleColumnMap[0]);

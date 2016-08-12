@@ -101,6 +101,7 @@ export interface IGridViewport {
     scrollIntoView(rect);
     scrollTo(point);
     scroll(topOffset, frontOffset);
+    getCellElementByEvent(event);
     getCellPositionByEvent(event);
 }
 

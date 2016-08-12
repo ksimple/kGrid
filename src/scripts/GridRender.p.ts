@@ -47,6 +47,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             scrollTo: (point) => this._scrollTo(point.top(), point.front()),
             scroll: (topOffset, frontOffset) => this._scroll(topOffset, frontOffset),
             getCellPositionByEvent: (event) => this._getCellPositionByEvent(event),
+            getCellElementByEvent: (event) => this._getCellElementByEvent(event),
         });
     }
 
@@ -179,6 +180,14 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         this._renderingScheduler.start(true);
     }
 
+    private _getCellElementById(rowId, columnId, tag?) {
+        var type = tag && tag.type || 'cell';
+
+        if (type == 'content') {
+        } else if (type == 'header') {
+        }
+    }
+
     private _attachEvents() {
         var scrollHandler = new Fundamental.AccumulateTimeoutInvoker(() => {
             this._updaters.update();
@@ -195,6 +204,22 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'updateRows',  (sender, args) => {
             this._onUpdateRows(sender, args);
         }));
+    }
+
+    private _getCellElementByEvent(event) {
+        var cell;
+
+        cell = $(event.target).closest('.msoc-list-content-cell');
+
+        if (cell[0]) {
+            return cell[0];
+        }
+
+        cell = $(event.target).closest('.msoc-list-header-cell');
+
+        if (cell[0]) {
+            return cell[0];
+        }
     }
 
     private _getCellPositionByEvent(event) {
@@ -217,7 +242,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         cell = $(event.target).closest('.msoc-list-header-cell');
 
         if (cell[0]) {
-            var columnId = cell.attr('columnId'),
+            var columnId = cell.attr('data-columnId'),
                 columnIndex = this._runtime.dataContexts.columnsDataContext.getColumnIndexById(columnId);
 
             return {

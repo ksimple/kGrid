@@ -3,13 +3,11 @@ class GridReorderColumnOperation implements IOperation {
     private _runtime;
     private _deferred;
     private _positionService;
-
-
-    private _tableView: TableView;
+    private _viewportService;
     private _rtl;
     private _headerCellElement;
     private _headerCellCoverElement;
-    private _reorderColumnUniqueId;
+    private _reorderColumnId;
     private _reorderColumnIndex;
     private _isTouch;
     private _pointerId;
@@ -22,14 +20,13 @@ class GridReorderColumnOperation implements IOperation {
     private _selectionStylesheetText;
     private _lastNewPlaceIndex;
     private _headerViewportCoordinate;
-    private _visibleColumnMap;
     private _started;
 
-    constructor(isTouch, pointerId, pointerDownCoordinate) {
+    constructor(isTouch, pointerId, pointerDownCoordinate, headerCellElement, reorderColumnIndex) {
         this.disposer = new Fundamental.Disposer(() => {
-            this._runtime.elements.root.removeClass('msoc-list-table-operation-ReorderColumn');
-            this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).show();
-            this._selectionStylesheet.content(this._selectionStylesheetText);
+            // this._runtime.elements.root.removeClass('msoc-list-table-operation-ReorderColumn');
+            // this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).show();
+            // this._selectionStylesheet.content(this._selectionStylesheetText);
             this._headerCellElement.removeClass('msoc-list-table-header-cell-moving');
 
             if (this._headerCellCoverElement) {
@@ -40,36 +37,35 @@ class GridReorderColumnOperation implements IOperation {
         this._isTouch = isTouch;
         this._pointerId = pointerId;
         this._pointerDownCoordinate = pointerDownCoordinate;
+        this._headerCellElement = $(headerCellElement);
+        this._reorderColumnIndex = reorderColumnIndex;
     }
 
     public canStart() {
         return true;
     }
 
-    public start(tableView, runtime, positionService, headerCellElement, selectionStylesheet): JQueryPromise<any> {
+    public start(runtime, positionService, viewportService, selectionStylesheet): JQueryPromise<any> {
         this._deferred = $.Deferred();
         this._runtime = runtime;
         this._positionService = positionService;
+        this._viewportService = viewportService;
 
-        this._tableView = tableView;
-        this._runtime.elements.root.addClass('msoc-list-table-operation-ReorderColumn');
+        this._reorderColumnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(this._reorderColumnIndex);
+        $(this._runtime.container).addClass('msoc-list-table-operation-ReorderColumn');
         this._selectionStylesheet = selectionStylesheet;
         this._rtl = this._runtime.direction.rtl();
-        this._headerCellElement = headerCellElement;
-        // this._startPointToHeaderElement = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement).minus(pointerDownCoordinate);
+        this._startPointToHeaderElement = Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement).minus(this._pointerDownCoordinate);
         this._startPointToHeaderElement.rtl(this._rtl);
         this._started = false;
-        this._visibleColumnMap = this._tableView.visibleColumnMap();
-        this._reorderColumnUniqueId = this._headerCellElement.attr('data-columnUniqueId');
-        this._reorderColumnIndex = this._visibleColumnMap.indexOf(this._reorderColumnUniqueId);
-        this._selectionStylesheetText = this._selectionStylesheet.content();
+        // this._selectionStylesheetText = this._selectionStylesheet.content();
 
         var args = {
             fromColumnIndex: this._reorderColumnIndex,
             cancel: false,
         };
 
-        this._runtime.events.emit('table.beforeColumnReorder', this, args);
+        this._runtime.events.internal.emit('beforeColumnReorder', this, args);
 
         if (!!args.cancel) {
             this._deferred.reject();
@@ -79,10 +75,10 @@ class GridReorderColumnOperation implements IOperation {
         this.disposer.addDisposable(this._transitionStylesheet = new Microsoft.Office.Controls.Fundamental.DynamicStylesheet(this._runtime.id + '_moving_column_transition'));
         this.disposer.addDisposable(this._movingStylesheet = new Microsoft.Office.Controls.Fundamental.DynamicStylesheet(this._runtime.id + '_moving_column'));
         this.disposer.addDisposable(this._currentColumnStylesheet = new Microsoft.Office.Controls.Fundamental.DynamicStylesheet(this._runtime.id + '_moving_current_column'));
-        this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).hide();
+        // this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).hide();
         this._lastNewPlaceIndex = -1;
 
-        this._selectionStylesheet.content('');
+        // this._selectionStylesheet.content('');
 
         var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
 
@@ -92,12 +88,12 @@ class GridReorderColumnOperation implements IOperation {
 
         this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
         cssText.push('.msoc-list-table-header-cell.msoc-list-table-header-cell-');
-        cssText.push(this._reorderColumnUniqueId);
+        cssText.push(this._reorderColumnId);
         cssText.property('transition', 'none');
 
         this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
         cssText.push('.msoc-list-table-header-cell-v-border-');
-        cssText.push(this._reorderColumnUniqueId);
+        cssText.push(this._reorderColumnId);
         cssText.property('display', 'none');
 
         this._transitionStylesheet.content(cssText.toString());
@@ -105,7 +101,7 @@ class GridReorderColumnOperation implements IOperation {
         this.disposer.addDisposable(new Fundamental.EventAttacher($(window), this._isTouch ? 'touchend' : 'mouseup', (event) => this._onPointerUp(event)));
         this.disposer.addDisposable(new Fundamental.EventAttacher($(window), this._isTouch ? 'touchmove' : 'mousemove', (event) => this._onPointerMove(event)));
 
-        this._headerViewportCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromElement(this._rtl, this._runtime.elements.headerViewport);
+        this._headerViewportCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromElement(this._rtl, $(this._viewportService.rootElement()).find('>.msoc-list-header-viewport'));
         return this._deferred.promise();
     }
 
@@ -133,7 +129,7 @@ class GridReorderColumnOperation implements IOperation {
             }
         }
 
-        var headerWidth = this._runtime.elements.headerViewport.width();
+        var headerWidth = $(this._viewportService.rootElement()).width();
         var pointerToHeaderViewCoordinate = pointerCoordinate.minus(this._headerViewportCoordinate);
 
         this._headerCellElement.addClass('msoc-list-table-header-cell-moving');
@@ -155,13 +151,13 @@ class GridReorderColumnOperation implements IOperation {
             this._runtime.scroll(0, Constants.OperationScrollNumber);
         }
 
-        var pointerCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, this._runtime.elements.headerViewport).add(pointerToHeaderViewCoordinate);
+        var pointerCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.rootElement())).add(pointerToHeaderViewCoordinate);
         var currentColumnCssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
-        var headerCellRect = this._tableView.getHeaderCellRect(this._reorderColumnUniqueId);
+        var headerCellRect = this._positionService.getRect(0, this._reorderColumnIndex, 1, this._reorderColumnIndex + 1, { type: 'header' });
 
         this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-table-operation-ReorderColumn');
         currentColumnCssText.push('.msoc-list-table-header-cell-');
-        currentColumnCssText.push(this._reorderColumnUniqueId);
+        currentColumnCssText.push(this._reorderColumnId);
         currentColumnCssText.property(this._runtime.direction.front(), pointerCoordinate.front() - headerCellRect.width / 2, 'px');
         currentColumnCssText.property('z-index', 1);
         currentColumnCssText.property('filter', 'alpha(opacity=90)');
@@ -171,7 +167,7 @@ class GridReorderColumnOperation implements IOperation {
 
         this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-table-operation-ReorderColumn');
         currentColumnCssText.push('.msoc-list-table-header-cell-v-border-');
-        currentColumnCssText.push(this._reorderColumnUniqueId);
+        currentColumnCssText.push(this._reorderColumnId);
         currentColumnCssText.property('display', 'none');
 
         this._currentColumnStylesheet.content(currentColumnCssText.toString());
@@ -185,7 +181,7 @@ class GridReorderColumnOperation implements IOperation {
                 cancel: false,
             };
 
-            this._runtime.events.emit('table.beforeColumnReorder', this, args);
+            this._runtime.events.internal.emit('beforeColumnReorder', this, args);
 
             if (!args.cancel) {
                 this._lastNewPlaceIndex = newPlaceIndex;
@@ -194,10 +190,10 @@ class GridReorderColumnOperation implements IOperation {
                     var movingToFront = this._reorderColumnIndex > newPlaceIndex,
                         fromIndex = movingToFront ? newPlaceIndex : this._reorderColumnIndex,
                         toIndex = movingToFront ? this._reorderColumnIndex : newPlaceIndex,
-                        front = this._runtime.options.columns[this._visibleColumnMap[fromIndex]].table.front;
+                        front = this._positionService.getRect(0, fromIndex, 0, fromIndex, { type: 'header' }).front;
 
                     if (movingToFront) {
-                        front += this._tableView.getColumnWidth(this._reorderColumnUniqueId) + this._runtime.options.theme.value('table.cellVBorder').width;
+                        front += this._positionService.getColumnWidthById(this._reorderColumnId) + this._runtime.theme.values['header.cell.border-right'].number;
                     }
 
                     var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
@@ -207,14 +203,14 @@ class GridReorderColumnOperation implements IOperation {
                             continue;
                         }
 
-                        var width = this._tableView.getColumnWidth(this._visibleColumnMap[i]);
+                        var width = this._positionService.getColumnWidthByIndex(i);
 
                         this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
                         cssText.push('.msoc-list-table-header-cell-');
-                        cssText.push(this._visibleColumnMap[i]);
+                        cssText.push(this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(i));
                         cssText.property(this._runtime.direction.front(), front, 'px');
 
-                        front += width + this._runtime.options.theme.value('table.cellVBorder').width;
+                        front += width + this._runtime.theme.values['header.cell.border-right'].number;
                     }
 
                     this._movingStylesheet.content(cssText.toString());
@@ -224,12 +220,12 @@ class GridReorderColumnOperation implements IOperation {
     }
 
     private getNewPlaceIndex(x) {
-        var newPlaceIndex = this._visibleColumnMap.length;
+        var newPlaceIndex = this._runtime.dataContexts.columnsDataContext.getColumnCount();
 
-        for (var i = 0; i < this._visibleColumnMap.length; i++) {
-            var column = this._runtime.options.columns[this._visibleColumnMap[i]];
+        for (var i = 0; i < this._runtime.dataContexts.columnsDataContext.getColumnCount(); i++) {
+            var front = this._positionService.getRect(0, i, 0, i, { type: 'header' }).front;
 
-            if (column.table.front + this._tableView.getColumnWidth(this._visibleColumnMap[i]) * 0.3 > x) {
+            if (front + this._positionService.getColumnWidthByIndex(this._positionService.getColumnWidthByIndex(i)) * 0.3 > x) {
                 newPlaceIndex = i;
                 break;
             }

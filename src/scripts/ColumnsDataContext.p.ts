@@ -76,6 +76,10 @@ export class ColumnsDataContext {
         return columnId;
     }
 
+    public getColumnCount() {
+        return this._visibleColumnIds.length;
+    }
+
     public visibleColumnIds(visibleColumns?: any[]) {
         if (arguments.length > 0) {
             this._visibleColumnIds = [];

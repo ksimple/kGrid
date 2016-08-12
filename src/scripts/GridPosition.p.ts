@@ -40,6 +40,10 @@ export class GridPosition implements IGridPosition, Fundamental.IFeature {
         return this._runtime.theme.values['content.row.height'].number;
     }
 
+    public getHeaderRowHeight() {
+        return this._runtime.theme.values['header.row.height'].number;
+    }
+
     public getRect(topRowIndex, frontColumnIndex, bottomRowIndex, endColumnIndex, tag?) {
         var type = tag ? tag.type : null;
 
@@ -55,8 +59,6 @@ export class GridPosition implements IGridPosition, Fundamental.IFeature {
                 endColumnFront = 0;
 
             for (var columnIndex = 0; columnIndex <= endColumnIndex; columnIndex++) {
-                var column = this._runtime.dataContexts.columnsDataContext.getColumnByIndex(columnIndex);
-
                 if (columnIndex < frontColumnIndex) {
                     frontColumnFront += this.getColumnWidthByIndex(columnIndex);
                 }
@@ -70,6 +72,29 @@ export class GridPosition implements IGridPosition, Fundamental.IFeature {
                 (bottomRowIndex - topRowIndex + 1) * rowHeight + (bottomRowIndex - topRowIndex) * cellHBorder,
                 endColumnFront - frontColumnFront);
         } else if (type == 'header') {
+            if (!this._validateContentCellIndex(0, frontColumnIndex) || !this._validateContentCellIndex(0, endColumnIndex)) {
+                return Fundamental.Rect.Null;
+            }
+
+            var rowHeader = this.getHeaderRowHeight(),
+                cellHBorder = this._runtime.theme.values['content.cell.border-bottom'].number,
+                visibleColumnIds = this._runtime.dataContexts.columnsDataContext.visibleColumnIds(),
+                frontColumnFront = 0,
+                endColumnFront = 0;
+
+            for (var columnIndex = 0; columnIndex <= endColumnIndex; columnIndex++) {
+                if (columnIndex < frontColumnIndex) {
+                    frontColumnFront += this.getColumnWidthByIndex(columnIndex);
+                }
+
+                endColumnFront += this.getColumnWidthByIndex(columnIndex);
+            }
+
+            return new Fundamental.Rect(
+                0,
+                frontColumnFront,
+                rowHeight,
+                endColumnFront - frontColumnFront);
         }
     }
 
