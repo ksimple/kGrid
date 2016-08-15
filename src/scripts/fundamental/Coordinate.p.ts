@@ -162,7 +162,6 @@ export class Coordinate {
         }
 
         var leftType = this._options.type, rightType = target._options.type;
-        console.log('leftType: ' + leftType);
         var func = Coordinate['_add' + CoordinateType['' + leftType] + 'By' + CoordinateType['' + rightType]];
 
         if (!func) {

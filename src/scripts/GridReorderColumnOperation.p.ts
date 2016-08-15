@@ -1,4 +1,5 @@
 class GridReorderColumnOperation implements IOperation {
+    public static logger = Fundamental.Logger.getLogger('kGrid.GridReorderColumnOperation');
     public disposer: Fundamental.Disposer;
     private _runtime;
     private _deferred;
@@ -12,7 +13,7 @@ class GridReorderColumnOperation implements IOperation {
     private _isTouch;
     private _pointerId;
     private _pointerDownCoordinate;
-    private _startPointToHeaderElement;
+    private _startPointToHeaderElementCoordinate;
     private _transitionStylesheet;
     private _movingStylesheet;
     private _currentColumnStylesheet;
@@ -24,10 +25,10 @@ class GridReorderColumnOperation implements IOperation {
 
     constructor(isTouch, pointerId, pointerDownCoordinate, headerCellElement, reorderColumnIndex) {
         this.disposer = new Fundamental.Disposer(() => {
-            // this._runtime.elements.root.removeClass('msoc-list-table-operation-ReorderColumn');
+            // this._runtime.elements.root.removeClass('msoc-list-operation-ReorderColumn');
             // this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).show();
             // this._selectionStylesheet.content(this._selectionStylesheetText);
-            this._headerCellElement.removeClass('msoc-list-table-header-cell-moving');
+            this._headerCellElement.removeClass('msoc-list-header-cell-moving');
 
             if (this._headerCellCoverElement) {
                 this._headerCellCoverElement.remove();
@@ -52,11 +53,11 @@ class GridReorderColumnOperation implements IOperation {
         this._viewportService = viewportService;
 
         this._reorderColumnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(this._reorderColumnIndex);
-        $(this._runtime.container).addClass('msoc-list-table-operation-ReorderColumn');
+        $(this._viewportService.rootElement()).addClass('msoc-list-operation-ReorderColumn');
         this._selectionStylesheet = selectionStylesheet;
         this._rtl = this._runtime.direction.rtl();
-        this._startPointToHeaderElement = Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement).minus(this._pointerDownCoordinate);
-        this._startPointToHeaderElement.rtl(this._rtl);
+        this._startPointToHeaderElementCoordinate = this._pointerDownCoordinate.minus(Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement));
+        this._startPointToHeaderElementCoordinate.rtl(this._rtl);
         this._started = false;
         // this._selectionStylesheetText = this._selectionStylesheet.content();
 
@@ -82,17 +83,17 @@ class GridReorderColumnOperation implements IOperation {
 
         var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
-        cssText.push('.msoc-list-table-header-cell');
+        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
+        cssText.push('.msoc-list-header-cell');
         cssText.property('transition', this._runtime.direction.front() + ' 200ms');
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
-        cssText.push('.msoc-list-table-header-cell.msoc-list-table-header-cell-');
+        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
+        cssText.push('.msoc-list-header-cell.msoc-list-header-cell-');
         cssText.push(this._reorderColumnId);
         cssText.property('transition', 'none');
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
-        cssText.push('.msoc-list-table-header-cell-v-border-');
+        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
+        cssText.push('.msoc-list-header-cell-v-border-');
         cssText.push(this._reorderColumnId);
         cssText.property('display', 'none');
 
@@ -131,8 +132,9 @@ class GridReorderColumnOperation implements IOperation {
 
         var headerWidth = $(this._viewportService.rootElement()).width();
         var pointerToHeaderViewCoordinate = pointerCoordinate.minus(this._headerViewportCoordinate);
+        pointerToHeaderViewCoordinate.rtl(this._rtl);
 
-        this._headerCellElement.addClass('msoc-list-table-header-cell-moving');
+        this._headerCellElement.addClass('msoc-list-header-cell-moving');
 
         if (!this._headerCellCoverElement) {
             this._headerCellElement.append(this._headerCellCoverElement = $('<div></div>'));
@@ -143,36 +145,36 @@ class GridReorderColumnOperation implements IOperation {
             this._headerCellCoverElement.css('right', '0px');
         }
 
-        pointerToHeaderViewCoordinate.rtl(this._rtl);
-
         if (pointerToHeaderViewCoordinate.front() < headerWidth * Constants.RatioToOperationScrollArea) {
-            this._runtime.scroll(0, -Constants.OperationScrollNumber);
+            GridReorderColumnOperation.logger.debug('scroll to front: ' + Constants.OperationScrollNumber);
+            this._viewportService.scroll(0, -Constants.OperationScrollNumber);
         } else if (pointerToHeaderViewCoordinate.front() > headerWidth * (1 - Constants.RatioToOperationScrollArea)) {
-            this._runtime.scroll(0, Constants.OperationScrollNumber);
+            GridReorderColumnOperation.logger.debug('scroll to rear: ' + Constants.OperationScrollNumber);
+            this._viewportService.scroll(0, Constants.OperationScrollNumber);
         }
 
-        var pointerCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.rootElement())).add(pointerToHeaderViewCoordinate);
+        var pointerToRootCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.rootElement())).add(pointerToHeaderViewCoordinate);
         var currentColumnCssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
-        var headerCellRect = this._positionService.getRect(0, this._reorderColumnIndex, 1, this._reorderColumnIndex + 1, { type: 'header' });
+        var headerCellRect = this._positionService.getRect(0, this._reorderColumnIndex, 0, this._reorderColumnIndex, { type: 'header' });
 
-        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-table-operation-ReorderColumn');
-        currentColumnCssText.push('.msoc-list-table-header-cell-');
+        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-operation-ReorderColumn');
+        currentColumnCssText.push('.msoc-list-header-cell-');
         currentColumnCssText.push(this._reorderColumnId);
-        currentColumnCssText.property(this._runtime.direction.front(), pointerCoordinate.front() - headerCellRect.width / 2, 'px');
+        currentColumnCssText.property(this._runtime.direction.front(), pointerToRootCoordinate.minus(this._startPointToHeaderElementCoordinate).front(), 'px');
         currentColumnCssText.property('z-index', 1);
         currentColumnCssText.property('filter', 'alpha(opacity=90)');
         currentColumnCssText.property('-moz-opacity', 0.9);
         currentColumnCssText.property('-khtml-opacity', 0.9);
         currentColumnCssText.property('opacity', 0.9);
 
-        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-table-operation-ReorderColumn');
-        currentColumnCssText.push('.msoc-list-table-header-cell-v-border-');
+        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-operation-ReorderColumn');
+        currentColumnCssText.push('.msoc-list-header-cell-v-border-');
         currentColumnCssText.push(this._reorderColumnId);
         currentColumnCssText.property('display', 'none');
 
         this._currentColumnStylesheet.content(currentColumnCssText.toString());
 
-        var newPlaceIndex = this.getNewPlaceIndex(pointerCoordinate.front());
+        var newPlaceIndex = this.getNewPlaceIndex(pointerToRootCoordinate.front());
 
         if (newPlaceIndex != this._lastNewPlaceIndex) {
             var args = {
@@ -184,16 +186,18 @@ class GridReorderColumnOperation implements IOperation {
             this._runtime.events.internal.emit('beforeColumnReorder', this, args);
 
             if (!args.cancel) {
+                GridReorderColumnOperation.logger.debug('Prepare to move column to ' + newPlaceIndex);
                 this._lastNewPlaceIndex = newPlaceIndex;
 
                 if (newPlaceIndex != this._reorderColumnIndex) {
                     var movingToFront = this._reorderColumnIndex > newPlaceIndex,
                         fromIndex = movingToFront ? newPlaceIndex : this._reorderColumnIndex,
                         toIndex = movingToFront ? this._reorderColumnIndex : newPlaceIndex,
-                        front = this._positionService.getRect(0, fromIndex, 0, fromIndex, { type: 'header' }).front;
+                        rect = this._positionService.getRect(0, fromIndex, 0, fromIndex, { type: 'header' }),
+                        front = rect.front;
 
                     if (movingToFront) {
-                        front += this._positionService.getColumnWidthById(this._reorderColumnId) + this._runtime.theme.values['header.cell.border-right'].number;
+                        front += rect.width + this._runtime.theme.values['header.cell.border-right'].number;
                     }
 
                     var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
@@ -205,8 +209,8 @@ class GridReorderColumnOperation implements IOperation {
 
                         var width = this._positionService.getColumnWidthByIndex(i);
 
-                        this._runtime.buildCssRootSelector(cssText, '.msoc-list-table-operation-ReorderColumn');
-                        cssText.push('.msoc-list-table-header-cell-');
+                        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
+                        cssText.push('.msoc-list-header-cell-');
                         cssText.push(this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(i));
                         cssText.property(this._runtime.direction.front(), front, 'px');
 
@@ -220,9 +224,10 @@ class GridReorderColumnOperation implements IOperation {
     }
 
     private getNewPlaceIndex(x) {
-        var newPlaceIndex = this._runtime.dataContexts.columnsDataContext.getColumnCount();
+        var columnCount = this._runtime.dataContexts.columnsDataContext.getColumnCount();
+        var newPlaceIndex = columnCount;
 
-        for (var i = 0; i < this._runtime.dataContexts.columnsDataContext.getColumnCount(); i++) {
+        for (var i = 0; i < columnCount; i++) {
             var front = this._positionService.getRect(0, i, 0, i, { type: 'header' }).front;
 
             if (front + this._positionService.getColumnWidthByIndex(this._positionService.getColumnWidthByIndex(i)) * 0.3 > x) {
