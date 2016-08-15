@@ -25,7 +25,7 @@ class GridReorderColumnOperation implements IOperation {
 
     constructor(isTouch, pointerId, pointerDownCoordinate, headerCellElement, reorderColumnIndex) {
         this.disposer = new Fundamental.Disposer(() => {
-            // this._runtime.elements.root.removeClass('msoc-list-operation-ReorderColumn');
+            $(this._viewportService.rootElement()).removeClass('msoc-list-operation-ReorderColumn');
             // this._runtime.elements.canvas.eq(TableView.CursorCanvasIndex).show();
             // this._selectionStylesheet.content(this._selectionStylesheetText);
             this._headerCellElement.removeClass('msoc-list-header-cell-moving');
@@ -153,7 +153,7 @@ class GridReorderColumnOperation implements IOperation {
             this._viewportService.scroll(0, Constants.OperationScrollNumber);
         }
 
-        var pointerToRootCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.rootElement())).add(pointerToHeaderViewCoordinate);
+        var pointerToRootCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.contentViewport())).add(pointerToHeaderViewCoordinate);
         var currentColumnCssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
         var headerCellRect = this._positionService.getRect(0, this._reorderColumnIndex, 0, this._reorderColumnIndex, { type: 'header' });
 
