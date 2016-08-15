@@ -55,6 +55,12 @@ class GridReorderColumn implements Fundamental.IFeature {
 
         return this._operatorService.start(name, new GridReorderColumnOperation(isTouch, pointerId, coordinate, headerCellElement, headerCellPosition.position.columnIndex))
         .done((oldColumnIndex, newColumnIndex) => {
+            var visibleColumnIds = this._runtime.dataContexts.columnsDataContext.visibleColumnIds();
+            var columnId = visibleColumnIds[oldColumnIndex];
+            visibleColumnIds.splice(oldColumnIndex, 1);
+            visibleColumnIds.splice(newColumnIndex - (oldColumnIndex < newColumnIndex ? 1 : 0), 0, columnId);
+            this._runtime.dataContexts.columnsDataContext.visibleColumnIds(visibleColumnIds);
+
             // if (oldColumnIndex == 0 || newColumnIndex == 0) {
             //     var headerCellElement = this.getHeaderCellElement(this._visibleColumnMap[0]);
 
