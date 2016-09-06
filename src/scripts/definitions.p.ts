@@ -119,6 +119,6 @@ export interface IGridSelection {
     hideSelection();
     showSelection();
     hideCursor();
-    showSelection();
+    showCursor();
 }
 

@@ -41,6 +41,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
     public inject($invoke) {
         $invoke.inject('viewportService', {
             frontContentCanvas: () => this._elements.content.canvases[0],
+            frontHeaderCanvas: () => this._elements.header.canvases[0],
             contentViewport: () => this._elements.content.viewport,
             headerViewport: () => this._elements.header.viewport,
             rootElement: () => this._elements.root,
@@ -559,7 +560,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         cssText.append(".$rootClass .msoc-list-header-bottom-border { height: ${theme.values['header.border-bottom'].width}; border-bottom: ${theme.texts['header.border-bottom']}; }\n");
         cssText.append(".$rootClass .msoc-list-header-cell-splitter-front { $front: 0px; width: 2px; }\n");
         cssText.append(".$rootClass .msoc-list-header-cell-first > .msoc-list-header-cell-splitter-front { display: none; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell-splitter-end { $end: -${theme.values['content.cell.border-bottom'].width}; width: ${theme.values['content.cell.border-bottom'].number + 2}px; }\n");
+        cssText.append(".$rootClass .msoc-list-header-cell-splitter-end { $end: -2px; width: 2px; }\n");
         cssText.append(".$rootClass .msoc-list-content-cell-content { top: 0px; $front: 0px; $end: 0px; padding: ${theme.values['content.cell.padding'][direction]}; height: ${theme.texts['content.row.height']}; line-height: ${theme.texts['content.row.height']}; }\n");
         cssText.append(".$rootClass .msoc-list-header-cell, .$rootClass .msoc-list-content-cell { display: none; }\n");
 

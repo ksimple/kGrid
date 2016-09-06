@@ -1,5 +1,5 @@
-class GridReorderColumn implements Fundamental.IFeature {
-    private static logger = Fundamental.Logger.getLogger('GridReorderColumn');
+class GridResizeColumn implements Fundamental.IFeature {
+    private static logger = Fundamental.Logger.getLogger('GridResizeColumn');
     public disposer;
     private _runtime: GridRuntime;
     private _invoke;
@@ -39,41 +39,31 @@ class GridReorderColumn implements Fundamental.IFeature {
             return;
         }
 
+        var headerCellElement = $(event.target).closest('.msoc-list-header-cell');
         var headerCellSplitterElement = $(event.target).closest('.msoc-list-header-cell-splitter');
 
-        if (headerCellSplitterElement.length > 0) {
-            return;
-        }
-
-        // Left button
-        if (event.which == 1) {
-            var result = this._viewportService.getCellPositionByEvent(event),
-                cellPosition = result && result.type == 'header' ? result.position : null;
-
-            if (!cellPosition) {
-                return;
+        if (headerCellElement.length > 0) {
+            if (headerCellSplitterElement.length > 0) {
+                this._startResizeColumn('resizeColumn', event);
             }
-
-            this._startReorderColumn('reorderColumn', cellPosition, event);
         }
     }
 
-    private _startReorderColumn(name, cellPosition, event) {
+    private _startResizeColumn(name, event) {
         var isTouch = Microsoft.Office.Controls.Fundamental.BrowserDetector.isTouchEvent(event.type),
             pointerId = Microsoft.Office.Controls.Fundamental.BrowserDetector.getChangedPointerIdentifier(event)[0],
             coordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromEvent(this._runtime.direction.rtl(), event)[pointerId],
             headerCellElement = this._viewportService.getCellElementByEvent(event),
             headerCellPosition = this._viewportService.getCellPositionByEvent(event);
 
-        return this._operatorService.start(name, new GridReorderColumnOperation(isTouch, pointerId, coordinate, headerCellElement, headerCellPosition.position.columnIndex))
-        .done((oldColumnIndex, newColumnIndex) => {
-            GridReorderColumn.logger.info('column ' + oldColumnIndex + ' inserted to ' + newColumnIndex);
-            var visibleColumnIds = this._runtime.dataContexts.columnsDataContext.visibleColumnIds(),
-                columnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(oldColumnIndex);
-
-            visibleColumnIds.splice(oldColumnIndex, 1);
-            visibleColumnIds.splice(newColumnIndex - (oldColumnIndex < newColumnIndex ? 1 : 0), 0, columnId);
-            this._runtime.dataContexts.columnsDataContext.visibleColumnIds(visibleColumnIds);
+        return this._operatorService.start(name, new GridResizeColumnOperation(isTouch, pointerId, coordinate, headerCellElement, headerCellPosition.position.columnIndex))
+        .done(newWidth => {
+            var columnIndex = headerCellPosition.position.columnIndex;
+            GridResizeColumn.logger.info('column ' + columnIndex + ' resized to ' + newWidth + 'px');
+            // column.table.width = width;
+            // this._updateColumnPosition();
+            // this._invalidateColumn(columnUniqueId);
+            // this._runtime.updateUI(1);
         });
     }
 }

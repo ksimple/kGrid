@@ -1,4 +1,5 @@
 export class GridUIOperator implements Fundamental.IFeature, IGridOperator {
+    private static logger = Fundamental.Logger.getLogger('GridUIOperator');
     public disposer;
     private _operation: IOperation;
     private _deferred: JQueryDeferred<any>;
@@ -31,12 +32,15 @@ export class GridUIOperator implements Fundamental.IFeature, IGridOperator {
         var deferred = this._deferred = $.Deferred();
 
         if (this._operation) {
+            GridUIOperator.logger.info('reject operation ' + operationName + ' since another operation ' + this._operationName + ' is running');
             deferred.reject();
             return deferred.promise();
         }
 
         this._invoke.withThis(operation, operation.canStart).done((canStart) => {
             if (typeof(canStart) != 'undefined' && !canStart) {
+                GridUIOperator.logger.info('the operation ' + operationName + ' cannot start now');
+                deferred.reject();
                 return;
             }
 
@@ -44,6 +48,7 @@ export class GridUIOperator implements Fundamental.IFeature, IGridOperator {
 
             this._operation = operation;
             this._operationName = operationName;
+            GridUIOperator.logger.info('start operation ' + operationName);
             this._invoke.withThis(this._operation, this._operation.start)
                 .done((result) => {
                     result
@@ -52,6 +57,8 @@ export class GridUIOperator implements Fundamental.IFeature, IGridOperator {
                     .fail(() => deferred.reject.apply(deferred, arguments))
                     .always(() => this.stop());
                 });
+            deferred.done(() => GridUIOperator.logger.info('operation ' + operationName + ' done'));
+            deferred.fail(() => GridUIOperator.logger.info('operation ' + operationName + ' fail'));
         });
 
         return deferred.promise();

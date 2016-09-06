@@ -229,6 +229,8 @@ module.exports = function(grunt) {
                     'src/scripts/GridPosition.p.ts',
                     'src/scripts/GridReorderColumn.p.ts',
                     'src/scripts/GridReorderColumnOperation.p.ts',
+                    'src/scripts/GridResizeColumn.p.ts',
+                    'src/scripts/GridResizeColumnOperation.p.ts',
                     'src/scripts/GridSelection.p.ts',
                     'src/scripts/GridRender.p.ts',
                     'src/scripts/GridRuntime.p.ts',
