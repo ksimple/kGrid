@@ -13,7 +13,7 @@ class GridReorderColumnOperation implements IOperation {
     private _isTouch;
     private _pointerId;
     private _pointerDownCoordinate;
-    private _startPointToHeaderElement;
+    private _startPointToHeaderElementCoordinate;
     private _transitionStylesheet;
     private _movingStylesheet;
     private _currentColumnStylesheet;
@@ -56,8 +56,8 @@ class GridReorderColumnOperation implements IOperation {
         this._reorderColumnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(this._reorderColumnIndex);
         $(this._viewportService.rootElement()).addClass('msoc-list-operation-ReorderColumn');
         this._rtl = this._runtime.direction.rtl();
-        this._startPointToHeaderElement = Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement).minus(this._pointerDownCoordinate);
-        this._startPointToHeaderElement.rtl(this._rtl);
+        this._startPointToHeaderElementCoordinate = this._pointerDownCoordinate.minus(Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement));
+        this._startPointToHeaderElementCoordinate.rtl(this._rtl);
         this._started = false;
 
         var args = {
@@ -187,16 +187,18 @@ class GridReorderColumnOperation implements IOperation {
             this._runtime.events.internal.emit('beforeColumnReorder', this, args);
 
             if (!args.cancel) {
+                GridReorderColumnOperation.logger.debug('Prepare to move column to ' + newPlaceIndex);
                 this._lastNewPlaceIndex = newPlaceIndex;
 
                 if (newPlaceIndex != this._reorderColumnIndex) {
                     var movingToFront = this._reorderColumnIndex > newPlaceIndex,
                         fromIndex = movingToFront ? newPlaceIndex : this._reorderColumnIndex,
                         toIndex = movingToFront ? this._reorderColumnIndex : newPlaceIndex,
-                        front = this._positionService.getRect(0, fromIndex, 0, fromIndex, { type: 'header' }).front;
+                        rect = this._positionService.getRect(0, fromIndex, 0, fromIndex, { type: 'header' }),
+                        front = rect.front;
 
                     if (movingToFront) {
-                        front += this._positionService.getColumnWidthById(this._reorderColumnId) + this._runtime.theme.values['header.cell.border-right'].number;
+                        front += rect.width + this._runtime.theme.values['header.cell.border-right'].number;
                     }
 
                     var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
@@ -223,9 +225,10 @@ class GridReorderColumnOperation implements IOperation {
     }
 
     private getNewPlaceIndex(x) {
-        var newPlaceIndex = this._runtime.dataContexts.columnsDataContext.getColumnCount();
+        var columnCount = this._runtime.dataContexts.columnsDataContext.getColumnCount();
+        var newPlaceIndex = columnCount;
 
-        for (var i = 0; i < this._runtime.dataContexts.columnsDataContext.getColumnCount(); i++) {
+        for (var i = 0; i < columnCount; i++) {
             var front = this._positionService.getRect(0, i, 0, i, { type: 'header' }).front;
 
             if (front + this._positionService.getColumnWidthByIndex(this._positionService.getColumnWidthByIndex(i)) * 0.3 > x) {

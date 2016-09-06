@@ -74,6 +74,7 @@ class GridReorderColumn implements Fundamental.IFeature {
             visibleColumnIds.splice(oldColumnIndex, 1);
             visibleColumnIds.splice(newColumnIndex - (oldColumnIndex < newColumnIndex ? 1 : 0), 0, columnId);
             this._runtime.dataContexts.columnsDataContext.visibleColumnIds(visibleColumnIds);
+            // TODO: send reorder event
         });
     }
 }
