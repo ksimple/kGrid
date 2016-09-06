@@ -1,4 +1,5 @@
 class GridMouseSelectOperation implements IOperation {
+    public static logger = Fundamental.Logger.getLogger('GridMouseSelectOperation');
     public disposer;
     private _runtime;
     private _startCellPosition;
@@ -23,7 +24,7 @@ class GridMouseSelectOperation implements IOperation {
     }
 
     public canStart() {
-        // return true;
+        return true;
     }
 
     public start(runtime, selectionService, viewportService) {
@@ -37,12 +38,14 @@ class GridMouseSelectOperation implements IOperation {
             columnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(this._startCellPosition.rowIndex);
 
         if (!rowId || !columnId) {
+            GridMouseSelectOperation.logger.debug('invalid rowId or columnId')
             this._deferred.reject();
             return this._deferred.promise();
         }
 
         if (this._selectionService.selectionMode() == SelectionMode.SingleRow ||
             this._selectionService.selectionMode() == SelectionMode.Cell) {
+            GridMouseSelectOperation.logger.debug('Cannot select for single row or cell')
             this._deferred.reject();
             return this._deferred.promise();
         }

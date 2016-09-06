@@ -1,4 +1,5 @@
 class GridMouseSelect implements Fundamental.IFeature {
+    public static logger = Fundamental.Logger.getLogger('GridMouseSelect');
     public disposer;
     private _runtime: GridRuntime;
     private _invoke;
