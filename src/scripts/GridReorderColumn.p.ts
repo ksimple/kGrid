@@ -61,29 +61,6 @@ class GridReorderColumn implements Fundamental.IFeature {
             visibleColumnIds.splice(oldColumnIndex, 1);
             visibleColumnIds.splice(newColumnIndex - (oldColumnIndex < newColumnIndex ? 1 : 0), 0, columnId);
             this._runtime.dataContexts.columnsDataContext.visibleColumnIds(visibleColumnIds);
-
-            // if (oldColumnIndex == 0 || newColumnIndex == 0) {
-            //     var headerCellElement = this.getHeaderCellElement(this._visibleColumnMap[0]);
-
-            //     if (headerCellElement) {
-            //         headerCellElement.removeClass('msoc-list-table-header-cell-first');
-            //     }
-            // }
-
-            // var columnUniqueId = this._visibleColumnMap.splice(oldColumnIndex, 1)[0];
-
-            // this._visibleColumnMap.splice(newColumnIndex - (oldColumnIndex < newColumnIndex ? 1 : 0), 0, columnUniqueId);
-
-            // if (oldColumnIndex == 0 || newColumnIndex == 0) {
-            //     var headerCellElement = this.getHeaderCellElement(this._visibleColumnMap[0]);
-
-            //     if (headerCellElement) {
-            //         headerCellElement.addClass('msoc-list-table-header-cell-first');
-            //     }
-            // }
-
-            // this._updateColumnPosition();
-            // this._runtime.updateUI(1);
         });
     }
 }
