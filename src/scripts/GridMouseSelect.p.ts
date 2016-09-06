@@ -52,6 +52,7 @@ class GridMouseSelect implements Fundamental.IFeature {
             .done((result) => {
                 var args = {
                         range: result.range,
+                        cursor: result.cursor,
                         reason: 'mouse',
                         cancel: false,
                     };
@@ -60,7 +61,12 @@ class GridMouseSelect implements Fundamental.IFeature {
 
                 if (!args.cancel) {
                     if (result.action == 'select') {
-                        this._selectionService.select(args.range, false);
+                        if (args.range) {
+                            this._selectionService.select(args.range, false);
+                        }
+                        if (args.cursor) {
+                            this._selectionService.cursor(args.cursor);
+                        }
                     } else {
                         this._selectionService.deselect(args.range);
                     }

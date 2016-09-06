@@ -7,16 +7,18 @@ class GridMouseSelectOperation implements IOperation {
     private _selectionService: IGridSelection;
     private _viewportService: IGridViewport;
     private _selectedRange;
-    private _oldSelectedRanges;
+    private _oldSelection;
     private _lastColumnIndex;
     private _lastRowIndex;
     private _rtl;
 
     constructor(cellPosition) {
         this.disposer = new Fundamental.Disposer(() => {
-            if (!this._oldSelectedRanges || this._oldSelectedRanges.length == 0) {
+            if (this._selectionService.selectionMode() == SelectionMode.SingleRow ||
+                this._selectionService.selectionMode() == SelectionMode.Cell) {
+                this._selectionService.cursor(this._oldSelection);
             } else {
-                this._selectionService.select(this._oldSelectedRanges[0], false);
+                this._selectionService.select(this._oldSelection, false);
             }
         });
 
@@ -43,27 +45,53 @@ class GridMouseSelectOperation implements IOperation {
             return this._deferred.promise();
         }
 
+
         if (this._selectionService.selectionMode() == SelectionMode.SingleRow ||
             this._selectionService.selectionMode() == SelectionMode.Cell) {
-            GridMouseSelectOperation.logger.debug('Cannot select for single row or cell')
-            this._deferred.reject();
-            return this._deferred.promise();
+            this._oldSelection = this._selectionService.cursor();
+            this.disposer.addDisposable(new Fundamental.EventAttacher($(this._viewportService.rootElement()), 'click', (event) => this._onMouseClick(event)));
+        } else {
+            this._oldSelection = this._selectionService.selectedRanges();
+            this.disposer.addDisposable(new Fundamental.EventAttacher($(window), 'mouseup', (event) => this._onMouseUp(event)));
+            this.disposer.addDisposable(new Fundamental.EventAttacher($(window), 'mousemove', (event) => this._onMouseMove(event)));
         }
 
-        this._oldSelectedRanges = this._selectionService.selectedRanges();
-
-        this.disposer.addDisposable(new Fundamental.EventAttacher($(window), 'mouseup', (event) => this._onMouseUp(event)));
-        this.disposer.addDisposable(new Fundamental.EventAttacher($(window), 'mousemove', (event) => this._onMouseMove(event)));
         return this._deferred.promise();
+    }
+
+    private _onMouseClick(event) {
+        if (event.which == 1) {
+            var result = this._viewportService.getCellPositionByEvent(event),
+                cellPosition = result && result.type == 'content' ? result.position : null;
+
+            if (!cellPosition) {
+                this._deferred.reject();
+                return;
+            }
+
+            var rowIndex = cellPosition.rowIndex,
+                columnIndex = cellPosition.columnIndex;
+
+            if (isNaN(rowIndex) || isNaN(columnIndex)) {
+                this._deferred.reject();
+                return;
+            }
+
+            if ((this._selectionService.selectionMode() == SelectionMode.SingleRow && this._oldSelection.rowIndex != rowIndex) ||
+                (this._selectionService.selectionMode() == SelectionMode.Cell && (this._oldSelection.rowIndex != rowIndex || this._oldSelection.columnIndex != columnIndex))) {
+                var position = new Position(rowIndex, columnIndex);
+                this._deferred.resolve({
+                    cursor: position,
+                    action: 'select'
+                });
+            } else {
+                this._deferred.reject();
+            }
+        }
     }
 
     private _onMouseUp(event) {
         if (event.which == 1) {
-            if (!this._oldSelectedRanges || this._oldSelectedRanges.length == 0) {
-            } else {
-                this._selectionService.select(this._oldSelectedRanges[0], false);
-            }
-
             if (this._selectedRange) {
                 this._deferred.resolve({
                     range: this._selectedRange,

@@ -68,8 +68,16 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
         return this._selection.cursor.apply(this._selection, arguments);
     }
 
-    public select(range: Range, keepSelectedRanges = false) {
-        return this._selection.select(range, keepSelectedRanges);
+    public select(range, keepSelectedRanges = false) {
+        if (!range) {
+            this._selection.clear();
+        } else if (range instanceof Array) {
+            for (var i = 0; i < range.length; i++) {
+                this._selection.select(range, i != 0 || keepSelectedRanges);
+            }
+        } else {
+            this._selection.select(range, keepSelectedRanges);
+        }
     }
 
     public deselect(range: Range) {
