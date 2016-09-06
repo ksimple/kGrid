@@ -116,5 +116,9 @@ export interface IGridSelection {
     selectionMode(selectionMode?: SelectionMode);
     selectedRanges();
     cursor(position?: Position);
+    hideSelection();
+    showSelection();
+    hideCursor();
+    showSelection();
 }
 

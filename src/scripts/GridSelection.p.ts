@@ -84,6 +84,22 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
         return this._selection.rangeOfCursor();
     }
 
+    public hideSelection() {
+        // TODO
+    }
+
+    public showSelection() {
+        // TODO
+    }
+
+    public hideCursor() {
+        // TODO
+    }
+
+    public showCursor() {
+        // TODO
+    }
+
     private _attachEvents() {
         this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'rowCountChange',  (sender, args) => {
             this._selection.rowCount(args.newValue);

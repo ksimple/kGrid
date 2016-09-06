@@ -38,6 +38,10 @@ export class Theme {
         themeElement.remove();
     }
 
+    public toString() {
+        return '(texts=' + JSON.stringify(this.texts) + ', values=' + JSON.stringify(this.values) + ')';
+    }
+
     private _parseCssText(cssTexts) {
         this.values = {};
         this.texts = {}

@@ -11,5 +11,9 @@ export class Rect {
         this.height = height;
         this.width = width;
     }
+
+    public toString() {
+        return '(front=' + this.front + ', top=' + this.top + ', width=' + this.width + ', height=' + this.height + ')';
+    }
 }
 

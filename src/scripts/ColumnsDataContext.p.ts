@@ -80,35 +80,23 @@ export class ColumnsDataContext {
         return this._visibleColumnIds.length;
     }
 
-    public visibleColumnIds(visibleColumns?: any[]) {
+    public visibleColumnIds(visibleColumnIds?: any[]) {
+        // TODO: check if there is a duplicated column id in the array
         if (arguments.length > 0) {
             this._visibleColumnIds = [];
 
-            for (var columnIndex = 0; columnIndex < visibleColumns.length; columnIndex++) {
-                var columnId = visibleColumns[columnIndex].columnId,
-                    width = visibleColumns[columnIndex].width,
+            for (var columnIndex = 0; columnIndex < visibleColumnIds.length; columnIndex++) {
+                var columnId = visibleColumnIds[columnIndex],
                     column = this._columns[columnId];
 
                 if (!column) {
                     throw Microsoft.Office.Controls.Fundamental.createError(0, 'ColumnsDataContext', 'invalid column id: ' + columnId);
                 }
 
-                // if (typeof(width) != 'undefined') {
-                //     width = parseFloat(width);
-
-                //     if (isNaN(width)) {
-                //         column.width = NaN;
-                //     } else if (width <= 0) {
-                //         throw Microsoft.Office.Controls.Fundamental.createError(0, 'ColumnsDataContext', 'invalid width: ' + columns[columnIndex].width);
-                //     } else {
-                //         column.width = width;
-                //     }
-                // }
-
                 this._visibleColumnIds.push(columnId);
             }
 
-            this._events.emit('visibleColumnIdsChange', this, this._visibleColumnIds);
+            this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds.slice(0) });
         } else {
             return this._visibleColumnIds.slice(0);
         }
@@ -120,7 +108,7 @@ export class ColumnsDataContext {
         }
 
         this._visibleColumnIds.splice(columnIndex, 1);
-        this._events.emit('visibleColumnIdsChange', this, this._visibleColumnIds);
+        this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds });
         // this._runtime.selection.remove(new Range(RangeType.Column, NaN, NaN, columnIndex, columnIndex));
         // this._updateColumnPosition();
         // this._invalidateHeader();
@@ -139,7 +127,7 @@ export class ColumnsDataContext {
         }
 
         this._visibleColumnIds.splice(columnIndex, 0, columnId);
-        this._events.emit('visibleColumnIdsChange', this, this._visibleColumnIds);
+        this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds });
         // this._runtime.selection.insert(new Range(RangeType.Column, NaN, NaN, columnIndex, columnIndex));
         // this._updateColumnPosition();
         // this._invalidateHeader();

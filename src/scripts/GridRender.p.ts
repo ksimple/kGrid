@@ -42,6 +42,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         $invoke.inject('viewportService', {
             frontContentCanvas: () => this._elements.content.canvases[0],
             contentViewport: () => this._elements.content.viewport,
+            headerViewport: () => this._elements.header.viewport,
             rootElement: () => this._elements.root,
             scrollIntoView: (rect) => this._scrollIntoView(rect.top, rect.front, rect.height, rect.width),
             scrollTo: (point) => this._scrollTo(point.top(), point.front()),

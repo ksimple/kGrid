@@ -76,7 +76,7 @@ export class GridPosition implements IGridPosition, Fundamental.IFeature {
                 return Fundamental.Rect.Null;
             }
 
-            var rowHeader = this.getHeaderRowHeight(),
+            var rowHeaderHeight = this.getHeaderRowHeight(),
                 cellHBorder = this._runtime.theme.values['content.cell.border-bottom'].number,
                 visibleColumnIds = this._runtime.dataContexts.columnsDataContext.visibleColumnIds(),
                 frontColumnFront = 0,
@@ -93,7 +93,7 @@ export class GridPosition implements IGridPosition, Fundamental.IFeature {
             return new Fundamental.Rect(
                 0,
                 frontColumnFront,
-                rowHeight,
+                rowHeaderHeight,
                 endColumnFront - frontColumnFront);
         }
     }
