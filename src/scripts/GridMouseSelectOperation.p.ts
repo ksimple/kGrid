@@ -77,7 +77,7 @@ class GridMouseSelectOperation implements IOperation {
                 return;
             }
 
-            if ((this._selectionService.selectionMode() == SelectionMode.SingleRow && this._oldSelection.rowIndex != rowIndex) ||
+            if ((this._selectionService.selectionMode() == SelectionMode.SingleRow && (this._oldSelection.rowIndex != rowIndex || this._oldSelection.columnIndex != columnIndex)) ||
                 (this._selectionService.selectionMode() == SelectionMode.Cell && (this._oldSelection.rowIndex != rowIndex || this._oldSelection.columnIndex != columnIndex))) {
                 var position = new Position(rowIndex, columnIndex);
                 this._deferred.resolve({

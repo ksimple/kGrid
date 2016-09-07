@@ -86,12 +86,6 @@ export class Grid {
                 }
             }));
 
-            // var renderContext = {
-            //     headerCells: [],
-            // };
-
-            // this._runtime.renderingScheduler.addWorker((context) => this._renderHeaderCellWorker(context), renderContext, 800);
-
             // window.setTimeout(() => {
             //     this._runtime.updaters.update();
             //     this._runtime.renderingScheduler.start(true);
@@ -116,10 +110,6 @@ export class Grid {
 
     public dispose() {
         this.disposer.dispose();
-    }
-
-    public features(name) {
-        return this._features[name];
     }
 
     public rowsDataContext(value?) {
