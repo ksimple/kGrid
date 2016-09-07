@@ -81,7 +81,7 @@ export class Selection {
             target: this,
             name: '_cursor',
             args: arguments,
-            beforeChange: (sender, args) => {
+            beforeChange: (args) => {
                 args.newValue = this._normalizeCursor(args.newValue);
 
                 if (args.newValue.equals(args.oldValue)) {
@@ -765,7 +765,7 @@ export class Selection {
                 return this._ranges;
             },
             (newValue, oldValue) => {
-                this._events.emit('selectionChange', this, { oldValue: oldValue, newValue: newValue });
+                this._events.emit('selectionChange', { oldValue: oldValue, newValue: newValue });
             });
     }
 
@@ -775,7 +775,7 @@ export class Selection {
                 return this._cursor;
             },
             (newValue, oldValue) => {
-                this._events.emit('cursorChange', this, { oldValue: oldValue, newValue: newValue });
+                this._events.emit('cursorChange', { oldValue: oldValue, newValue: newValue });
             });
     }
 }

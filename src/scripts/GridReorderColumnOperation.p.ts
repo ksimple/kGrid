@@ -65,7 +65,7 @@ class GridReorderColumnOperation implements IOperation {
             cancel: false,
         };
 
-        this._runtime.events.internal.emit('beforeColumnReorder', this, args);
+        this._runtime.events.internal.emit('beforeColumnReorder', args);
 
         if (!!args.cancel) {
             this._deferred.reject();
@@ -184,7 +184,7 @@ class GridReorderColumnOperation implements IOperation {
                 cancel: false,
             };
 
-            this._runtime.events.internal.emit('beforeColumnReorder', this, args);
+            this._runtime.events.internal.emit('beforeColumnReorder', args);
 
             if (!args.cancel) {
                 GridReorderColumnOperation.logger.debug('Prepare to move column to ' + newPlaceIndex);

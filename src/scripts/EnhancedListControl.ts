@@ -399,7 +399,7 @@ module Microsoft.Office.Controls {
             var events = args.events;
 
             if (!this._enhancedListControl.editable()) {
-                events.emit('reject', this, null);
+                events.emit('reject', null);
                 return;
             }
 
@@ -455,10 +455,10 @@ module Microsoft.Office.Controls {
                 rtl: rtl,
             })
             .done((value) => {
-                events.emit('accept', this, value);
+                events.emit('accept', value);
                 delete value.resolve;
             })
-            .fail(() => events.emit('reject', this, null))
+            .fail(() => events.emit('reject', null))
             .always(() => disposer.dispose());
         }
     }
@@ -675,7 +675,7 @@ module Microsoft.Office.Controls {
             return this._properties.$property({
                 name: 'editable',
                 args: arguments,
-                afterChange: (sender, args) => {
+                afterChange: (args) => {
                         var columnIndex = this._listControl.getColumnIndexById(this._firstColumnUniqueId);
                         if (!isNaN(columnIndex)) {
                             this.invalidateHeaderCell(columnIndex);
@@ -948,7 +948,7 @@ module Microsoft.Office.Controls {
                 isDropDownClosed = false;
             };
 
-            return this._events.emit('headerDropDown', this, args);
+            return this._events.emit('headerDropDown', args);
         }
 
         private _attachProxyEvents() {
@@ -1007,7 +1007,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'selectionChange',
-                    (sender, args) => {
+                    (args) => {
                         if (!disableInvalidateFirstColumn) {
                             this._listControl.invalidateRange(new controls.Range(controls.RangeType.Column, NaN, NaN, 0, 0));
                         }
@@ -1016,7 +1016,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'beforeColumnReorder',
-                    (sender, args) => {
+                    (args) => {
                         if (args.fromColumnIndex == 0 || args.toColumnIndex == 0) {
                             args.cancel = true;
                         }
@@ -1025,7 +1025,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'beforeSelect',
-                    (sender, args) => {
+                    (args) => {
                         if (args.reason == 'mouse' && args.range.type() == controls.RangeType.Row) {
                             args.cancel = true;
                         }
@@ -1034,7 +1034,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'beforeCursorChange',
-                    (sender, args) => {
+                    (args) => {
                         if (args.columnIndex == 0 && this._properties.editable) {
                             args.cancel == true;
                         } else if (this._listControl.getOperationName() == 'table.edit') {
@@ -1052,7 +1052,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'rowClick',
-                    (sender, args) => {
+                    (args) => {
                         if (args.columnIndex == 0) {
                             selectRow(args.rowIndex, args.rowIndex);
                         }
@@ -1061,7 +1061,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'headerRowClick',
-                    (sender, args) => {
+                    (args) => {
                         if (args.event.which != 1) {
                             // Not left button
                             return;
@@ -1072,7 +1072,7 @@ module Microsoft.Office.Controls {
                         if (dropDownMenuElement.length > 0) {
                             this.showDropDownMenu(dropDownMenuElement, args);
                         } else {
-                            return this._events.emit('headerRowClick', this, args);
+                            return this._events.emit('headerRowClick', args);
                        }
                     }));
 
@@ -1080,7 +1080,7 @@ module Microsoft.Office.Controls {
                 new controls.Fundamental.EventAttacher(
                     this._listControl,
                     'headerRowContextMenu',
-                    (sender, args) => {
+                    (args) => {
                         if (args.event.which != 3) {
                             // Not right button
                             return;
@@ -1097,7 +1097,7 @@ module Microsoft.Office.Controls {
                         if (dropDownMenuElement.length > 0) {
                             this.showDropDownMenu(dropDownMenuElement, args);
                         } else {
-                            return this._events.emit('headerRowContextMenu', this, args);
+                            return this._events.emit('headerRowContextMenu', args);
                         }
                     }));
         }

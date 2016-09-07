@@ -94,7 +94,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             new Fundamental.EventAttacher(
                 this._runtime.events.internal,
                 'propertyChange',
-                (sender, args) => {
+                (args) => {
                     if (args.name == 'width' || args.name == 'height') {
                         this._updaters.update();
                     }
@@ -104,7 +104,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             new Fundamental.EventAttacher(
                 this._runtime.dataContexts.columnsDataContext,
                 'visibleColumnIdsChange',
-                (sender, args) => {
+                (args) => {
                     this._updaters.update();
             }));
 
@@ -112,7 +112,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             new Fundamental.EventAttacher(
                 this._runtime.dataContexts.rowsDataContext,
                 'rowCountChange',
-                (sender, args) => {
+                (args) => {
                     this._updaters.update();
             }));
 
@@ -200,11 +200,11 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             this._elements.header.viewport.scrollLeft = this._elements.content.viewport.scrollLeft;
             scrollHandler.invoke();
         }));
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'removeRows insertRows',  (sender, args) => {
-            this._onRemoveInsertRows(sender, args);
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'removeRows insertRows',  (args) => {
+            this._onRemoveInsertRows(args);
         }));
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'updateRows',  (sender, args) => {
-            this._onUpdateRows(sender, args);
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'updateRows',  (args) => {
+            this._onUpdateRows(args);
         }));
     }
 
@@ -254,12 +254,12 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         }
     }
 
-    private _onUpdateRows(sender, args) {
+    private _onUpdateRows(args) {
         this._updaters.update();
         this._invalidateRows('content', args.range);
     }
 
-    private _onRemoveInsertRows(sender, args) {
+    private _onRemoveInsertRows(args) {
         this._updaters.update();
 
         if (args.range.top() <= this._renderRange.bottom()) {
@@ -692,7 +692,6 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             if (this._renderRange.isValid()) {
                 // this._runtime.events.emit(
                 //     'table.beforeRender',
-                //     this,
                 //     {
                 //         renderRange: this._renderRange,
                 //     });

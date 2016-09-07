@@ -19,7 +19,6 @@ export class EventSite {
          * @member {Microsoft.Office.Controls.Fundamental.Disposer} Microsoft.Office.Controls.Fundamental.EventSite#disposer
          */
         this.disposer = new Fundamental.Disposer(() => this._sites = null);
-
         this._sites = {};
     }
 
@@ -68,7 +67,7 @@ export class EventSite {
      * @param {object} sender - Sender of event
      * @param {object} args - Arguments of event
      */
-    public emit(event, sender, args) {
+    public emit(event, args) {
         if (this.disposer.isDisposed || this.disposer.isDisposing) {
             return;
         }
@@ -80,7 +79,7 @@ export class EventSite {
         }
 
         for (var i = 0; i < site.length; i++) {
-            site[i](sender, args);
+            site[i](args);
         }
     }
 }

@@ -57,7 +57,7 @@ class GridMouseSelect implements Fundamental.IFeature {
                         cancel: false,
                     };
 
-                this._runtime.events.internal.emit(result.action == 'select' ? 'beforeSelect' : 'beforeDeselect', this, args);
+                this._runtime.events.internal.emit(result.action == 'select' ? 'beforeSelect' : 'beforeDeselect', args);
 
                 if (!args.cancel) {
                     if (result.action == 'select') {

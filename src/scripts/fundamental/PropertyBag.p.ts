@@ -100,7 +100,7 @@ export class PropertyBag {
             if (beforeChange) {
                 var beforeChangeArgs = { name: name, newValue: newValue, oldValue: oldValue, cancel: false };
 
-                beforeChange(target, beforeChangeArgs);
+                beforeChange(beforeChangeArgs);
 
                 if (beforeChangeArgs.cancel) {
                     return;
@@ -115,7 +115,7 @@ export class PropertyBag {
             if (afterChange) {
                 var afterChangeArgs = { name: name, newValue: newValue, oldValue: oldValue };
 
-                afterChange(target, afterChangeArgs);
+                afterChange(afterChangeArgs);
                 return afterChange.newValue;
             }
 
@@ -124,7 +124,7 @@ export class PropertyBag {
             var afterReadArgs = { name: name, newValue: target[name] };
 
             if (afterRead) {
-                afterRead(target, afterReadArgs);
+                afterRead(afterReadArgs);
             }
 
             return afterReadArgs.newValue;

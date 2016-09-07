@@ -50,7 +50,7 @@ export class ColumnsDataContext {
         }
 
         if (columnDefinitions.length > 0) {
-            this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds });
+            this._events.emit('visibleColumnIdsChange', { newValue: this._visibleColumnIds });
         }
 
         return columnIds;
@@ -96,7 +96,7 @@ export class ColumnsDataContext {
                 this._visibleColumnIds.push(columnId);
             }
 
-            this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds.slice(0) });
+            this._events.emit('visibleColumnIdsChange', { newValue: this._visibleColumnIds.slice(0) });
         } else {
             return this._visibleColumnIds.slice(0);
         }
@@ -108,7 +108,7 @@ export class ColumnsDataContext {
         }
 
         this._visibleColumnIds.splice(columnIndex, 1);
-        this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds });
+        this._events.emit('visibleColumnIdsChange', { newValue: this._visibleColumnIds });
         // this._runtime.selection.remove(new Range(RangeType.Column, NaN, NaN, columnIndex, columnIndex));
         // this._updateColumnPosition();
         // this._invalidateHeader();
@@ -127,7 +127,7 @@ export class ColumnsDataContext {
         }
 
         this._visibleColumnIds.splice(columnIndex, 0, columnId);
-        this._events.emit('visibleColumnIdsChange', this, { newValue: this._visibleColumnIds });
+        this._events.emit('visibleColumnIdsChange', { newValue: this._visibleColumnIds });
         // this._runtime.selection.insert(new Range(RangeType.Column, NaN, NaN, columnIndex, columnIndex));
         // this._updateColumnPosition();
         // this._invalidateHeader();

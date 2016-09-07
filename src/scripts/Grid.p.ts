@@ -73,7 +73,7 @@ export class Grid {
                         element: rootElement[0],
                         cancel: false,
                     };
-                    this._runtime.events.internal.emit('beforeMouseDownFocus', this, args);
+                    this._runtime.events.internal.emit('beforeMouseDownFocus', args);
 
                     if (!args.cancel) {
                         args.element.focus();
@@ -117,7 +117,7 @@ export class Grid {
             target: this._runtime.dataContexts,
             name: 'rowsDataContext',
             args: arguments,
-            beforeChange: (sender, args) => {
+            beforeChange: (args) => {
                 args.cancel = true;
             },
         });
@@ -128,7 +128,7 @@ export class Grid {
             target: this._runtime.dataContexts,
             name: 'columnsDataContext',
             args: arguments,
-            beforeChange: (sender, args) => {
+            beforeChange: (args) => {
                 args.cancel = true;
             },
         });
@@ -139,9 +139,9 @@ export class Grid {
             target: this._runtime,
             name: 'width',
             args: arguments,
-            afterChange: (sender, args) => {
+            afterChange: (args) => {
                 $(this._runtime.container).css('width', args.newValue + 'px');
-                this._runtime.events.internal.emit('propertyChange', this, { name: 'width', newValue: args.newValue, oldValue: args.oldValue });
+                this._runtime.events.internal.emit('propertyChange', { name: 'width', newValue: args.newValue, oldValue: args.oldValue });
             },
         });
     }
@@ -151,9 +151,9 @@ export class Grid {
             target: this._runtime,
             name: 'height',
             args: arguments,
-            afterChange: (sender, args) => {
+            afterChange: (args) => {
                 $(this._runtime.container).css('height', args.newValue + 'px');
-                this._runtime.events.internal.emit('propertyChange', this, { name: 'height', newValue: args.newValue, oldValue: args.oldValue });
+                this._runtime.events.internal.emit('propertyChange', { name: 'height', newValue: args.newValue, oldValue: args.oldValue });
             },
         });
     }

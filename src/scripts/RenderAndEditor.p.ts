@@ -163,8 +163,8 @@ export class SimpleCellEditor implements IEditor {
             row: row,
             rtl: rtl,
         })
-        .done((value) => events.emit('accept', this, value))
-        .fail(() => events.emit('reject', this, null));
+        .done((value) => events.emit('accept', value))
+        .fail(() => events.emit('reject', null));
     }
 }
 

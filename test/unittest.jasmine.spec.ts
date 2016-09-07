@@ -240,19 +240,17 @@ describe('Basic Functionality', function () {
 
             expect(beforeChange).toHaveBeenCalled();
             expect(beforeChange.callCount).toBe(1);
-            expect(beforeChange.mostRecentCall.args.length).toBe(2);
-            expect(beforeChange.mostRecentCall.args[0]).toBe(propertyBag);
-            expect(beforeChange.mostRecentCall.args[1].name).toBe('test');
-            expect(beforeChange.mostRecentCall.args[1].oldValue).toBe('abc');
-            expect(beforeChange.mostRecentCall.args[1].newValue).toBe('def');
+            expect(beforeChange.mostRecentCall.args.length).toBe(1);
+            expect(beforeChange.mostRecentCall.args[0].name).toBe('test');
+            expect(beforeChange.mostRecentCall.args[0].oldValue).toBe('abc');
+            expect(beforeChange.mostRecentCall.args[0].newValue).toBe('def');
 
             expect(afterChange).toHaveBeenCalled();
             expect(afterChange.callCount).toBe(1);
-            expect(afterChange.mostRecentCall.args.length).toBe(2);
-            expect(afterChange.mostRecentCall.args[0]).toBe(propertyBag);
-            expect(afterChange.mostRecentCall.args[1].name).toBe('test');
-            expect(afterChange.mostRecentCall.args[1].oldValue).toBe('abc');
-            expect(afterChange.mostRecentCall.args[1].newValue).toBe('def');
+            expect(afterChange.mostRecentCall.args.length).toBe(1);
+            expect(afterChange.mostRecentCall.args[0].name).toBe('test');
+            expect(afterChange.mostRecentCall.args[0].oldValue).toBe('abc');
+            expect(afterChange.mostRecentCall.args[0].newValue).toBe('def');
 
             beforeChange.reset();
             afterChange.reset();
@@ -267,7 +265,7 @@ describe('Basic Functionality', function () {
             propertyBag.$property({
                 name: 'test',
                 args: [1],
-                beforeChange: (sender, args) => {
+                beforeChange: (args) => {
                     args.newValue = 2;
                 },
                 afterChange: afterChange,
@@ -275,11 +273,10 @@ describe('Basic Functionality', function () {
 
             expect(afterChange).toHaveBeenCalled();
             expect(afterChange.callCount).toBe(1);
-            expect(afterChange.mostRecentCall.args.length).toBe(2);
-            expect(afterChange.mostRecentCall.args[0]).toBe(propertyBag);
-            expect(afterChange.mostRecentCall.args[1].name).toBe('test');
-            expect(afterChange.mostRecentCall.args[1].oldValue).toBe(0);
-            expect(afterChange.mostRecentCall.args[1].newValue).toBe(2);
+            expect(afterChange.mostRecentCall.args.length).toBe(1);
+            expect(afterChange.mostRecentCall.args[0].name).toBe('test');
+            expect(afterChange.mostRecentCall.args[0].oldValue).toBe(0);
+            expect(afterChange.mostRecentCall.args[0].newValue).toBe(2);
             expect(propertyBag.test).toBe(2);
 
             beforeChange.reset();
@@ -295,7 +292,7 @@ describe('Basic Functionality', function () {
             propertyBag.$property({
                 name: 'test',
                 args: [1],
-                beforeChange: (sender, args) => {
+                beforeChange: (args) => {
                     args.cancel = true;
                 },
                 afterChange: afterChange,

@@ -108,7 +108,7 @@ export class Coordinate {
         return this._options.$property({
             name: 'rtl',
             args: arguments,
-            beforeChange: (sender, args) => {
+            beforeChange: (args) => {
                 if (this._options.type == CoordinateType.Viewport) {
                     if (isNaN(this._options.width)) {
                         throw createError(0, 'Coordinate', 'missing width to toggle rtl');
@@ -146,7 +146,7 @@ export class Coordinate {
         return this._options.$property({
             name: 'width',
             args: arguments,
-            beforeChange: (sender, args) => {
+            beforeChange: (args) => {
                 args.newValue = isNaN(args.newValue) ? NaN : parseFloat(args.newValue);
 
                 if (!isNaN(args.newValue) && args.newValue < 0) {

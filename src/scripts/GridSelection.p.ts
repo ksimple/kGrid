@@ -54,7 +54,7 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
             target: this,
             name: '_selectionMode',
             args: arguments,
-            afterChange: (sender, args) => {
+            afterChange: (args) => {
                 this._selection.selectionMode(args.newValue);
             }
         });
@@ -109,16 +109,16 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
     }
 
     private _attachEvents() {
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'rowCountChange',  (sender, args) => {
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.rowsDataContext, 'rowCountChange',  (args) => {
             this._selection.rowCount(args.newValue);
         }));
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.columnsDataContext, 'visibleColumnIdsChange',  (sender, args) => {
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._runtime.dataContexts.columnsDataContext, 'visibleColumnIdsChange',  (args) => {
             this._selection.columnCount(args.newValue.length);
         }));
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._selection, 'cursorChange', (sender, args) => {
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._selection, 'cursorChange', (args) => {
             this._cursorUpdater.update();
         }));
-        this.disposer.addDisposable(new Fundamental.EventAttacher(this._selection, 'selectionChange', (sender, args) => {
+        this.disposer.addDisposable(new Fundamental.EventAttacher(this._selection, 'selectionChange', (args) => {
             this._selectionUpdater.update();
         }));
         this.disposer.addDisposable(new Fundamental.EventAttacher($(this._viewportService.rootElement()), 'keydown', (event) => {
@@ -157,7 +157,7 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
 
             if (newCursor) {
                 args = { oldValue: currentCursor, newValue: newCursor, cancel: false };
-                this._runtime.events.internal.emit('beforeCursorChange', this, args);
+                this._runtime.events.internal.emit('beforeCursorChange', args);
 
                 if (!args.cancel) {
                     var cellPosition = this._positionService.getRect(args.newValue.rowIndex, args.newValue.columnIndex, args.newValue.rowIndex, args.newValue.columnIndex);

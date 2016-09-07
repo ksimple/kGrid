@@ -388,11 +388,11 @@ require(['js/listcontrol', 'js/enhancedlistcontrol', 'DataPicker', 'jqueryui', '
 
         listControlObject.addColumns(columns);
 
-        listControlObject.on('rowClick', (sender, args) => {
+        listControlObject.on('rowClick', (args) => {
             console.log(JSON.stringify(listControlObject.getRowsByIndex(args.rowIndex, 1)[0].Id, null, 2));
         });
 
-        listControlObject.on('headerRowClick', (sender, args) => {
+        listControlObject.on('headerRowClick', (args) => {
             // if (headerCellData.icons.length == 0) {
             //     headerCellData.icons.push('arrowDown');
             // } else if (headerCellData.icons[0] == 'arrowDown') {
@@ -423,7 +423,7 @@ require(['js/listcontrol', 'js/enhancedlistcontrol', 'DataPicker', 'jqueryui', '
             listControlObject.invalidateHeaderCell(args.columnIndex);
         });
 
-        listControlObject.on('headerDropDown', (sender, args) => {
+        listControlObject.on('headerDropDown', (args) => {
             args.updateDropDown({
                 items: [
                     {
@@ -474,34 +474,34 @@ require(['js/listcontrol', 'js/enhancedlistcontrol', 'DataPicker', 'jqueryui', '
             return deferred.promise();
         }
 
-        listControlObject.on('cursorChange', (sender, args) => {
+        listControlObject.on('cursorChange', (args) => {
             console.log('cursorChange: ' + JSON.stringify(args));
         });
 
-        listControlObject.on('selectionChange', (sender, args) => {
+        listControlObject.on('selectionChange', (args) => {
             console.log('selectionChange: ' + JSON.stringify(args));
         });
 
-        listControlObject.on('beforeSelect', (sender, args) => {
+        listControlObject.on('beforeSelect', (args) => {
             console.log('beforeSelect: ' + JSON.stringify(args));
         });
 
-        listControlObject.on('beforeDeselect', (sender, args) => {
+        listControlObject.on('beforeDeselect', (args) => {
             console.log('beforeDeselect: ' + JSON.stringify(args));
         });
 
-        listControlObject.on('beforeColumnReorder', (sender, args) => {
+        listControlObject.on('beforeColumnReorder', (args) => {
             console.log('beforeColumnReorder: ' + JSON.stringify(args));
         });
 
-        listControlObject.on('beforeCursorChange', (sender, args) => {
+        listControlObject.on('beforeCursorChange', (args) => {
             console.log('beforeCursorChange: ' + JSON.stringify(args));
             if (args.rowIndex == 3) {
                 args.cancel = true;
             }
         });
 
-        listControlObject.on('beforeRender', (sender, args) => {
+        listControlObject.on('beforeRender', (args) => {
             var rows = listControlObject.getRowsByIndex(args.renderRange.top(), args.renderRange.bottom() - args.renderRange.top() + 1);
             var changed = false;
             var startIndex, endIndex;
