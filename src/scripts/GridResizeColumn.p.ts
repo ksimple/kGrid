@@ -39,8 +39,8 @@ class GridResizeColumn implements Fundamental.IFeature {
             return;
         }
 
-        var headerCellElement = $(event.target).closest('.msoc-list-header-cell');
-        var headerCellSplitterElement = $(event.target).closest('.msoc-list-header-cell-splitter');
+        var headerCellElement = $(event.target).closest('.kGrid-header-cell');
+        var headerCellSplitterElement = $(event.target).closest('.kGrid-header-cell-splitter');
 
         if (headerCellElement.length > 0) {
             if (headerCellSplitterElement.length > 0) {

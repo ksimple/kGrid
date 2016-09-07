@@ -25,10 +25,10 @@ class GridReorderColumnOperation implements IOperation {
         // TODO: the header element will be removed if it is out of current viewport, so we need to tell render engine
         // that we are moving the header element and do not remove it.
         this.disposer = new Fundamental.Disposer(() => {
-            $(this._viewportService.rootElement()).removeClass('msoc-list-operation-ReorderColumn');
+            $(this._viewportService.rootElement()).removeClass('kGrid-operation-ReorderColumn');
             // TODO: hide the selection and cursor
             // Do we still need to do this? Since we only move the header when user is moving now.
-            this._headerCellElement.removeClass('msoc-list-header-cell-moving');
+            this._headerCellElement.removeClass('kGrid-header-cell-moving');
 
             if (this._headerCellCoverElement) {
                 this._headerCellCoverElement.remove();
@@ -54,7 +54,7 @@ class GridReorderColumnOperation implements IOperation {
         this._viewportService = viewportService;
 
         this._reorderColumnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(this._reorderColumnIndex);
-        $(this._viewportService.rootElement()).addClass('msoc-list-operation-ReorderColumn');
+        $(this._viewportService.rootElement()).addClass('kGrid-operation-ReorderColumn');
         this._rtl = this._runtime.direction.rtl();
         this._startPointToHeaderElementCoordinate = this._pointerDownCoordinate.minus(Fundamental.CoordinateFactory.fromElement(this._rtl, this._headerCellElement));
         this._startPointToHeaderElementCoordinate.rtl(this._rtl);
@@ -80,17 +80,17 @@ class GridReorderColumnOperation implements IOperation {
 
         var cssText = new Microsoft.Office.Controls.Fundamental.CssTextBuilder();
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
-        cssText.push('.msoc-list-header-cell');
+        this._runtime.buildCssRootSelector(cssText, '.kGrid-operation-ReorderColumn');
+        cssText.push('.kGrid-header-cell');
         cssText.property('transition', this._runtime.direction.front() + ' 200ms');
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
-        cssText.push('.msoc-list-header-cell.msoc-list-header-cell-');
+        this._runtime.buildCssRootSelector(cssText, '.kGrid-operation-ReorderColumn');
+        cssText.push('.kGrid-header-cell.kGrid-header-cell-');
         cssText.push(this._reorderColumnId);
         cssText.property('transition', 'none');
 
-        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
-        cssText.push('.msoc-list-header-cell-v-border-');
+        this._runtime.buildCssRootSelector(cssText, '.kGrid-operation-ReorderColumn');
+        cssText.push('.kGrid-header-cell-v-border-');
         cssText.push(this._reorderColumnId);
         cssText.property('display', 'none');
 
@@ -100,7 +100,7 @@ class GridReorderColumnOperation implements IOperation {
         this.disposer.addDisposable(new Fundamental.EventAttacher($(window), this._isTouch ? 'touchmove' : 'mousemove', (event) => this._onPointerMove(event)));
 
         // TODO: remove find
-        this._headerViewportCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromElement(this._rtl, $(this._viewportService.rootElement()).find('>.msoc-list-header-viewport'));
+        this._headerViewportCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.fromElement(this._rtl, $(this._viewportService.rootElement()).find('>.kGrid-header-viewport'));
         return this._deferred.promise();
     }
 
@@ -128,7 +128,7 @@ class GridReorderColumnOperation implements IOperation {
             }
         }
 
-        this._headerCellElement.addClass('msoc-list-header-cell-moving');
+        this._headerCellElement.addClass('kGrid-header-cell-moving');
 
         if (!this._headerCellCoverElement) {
             GridReorderColumnOperation.logger.trace('create header cell cover element');
@@ -157,8 +157,8 @@ class GridReorderColumnOperation implements IOperation {
 
         GridReorderColumnOperation.logger.trace('pointerToHeaderContentCoordinate: ' + pointerToHeaderContentCoordinate.toString());
         GridReorderColumnOperation.logger.trace('headerCellRect: ' + headerCellRect.toString());
-        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-operation-ReorderColumn');
-        currentColumnCssText.push('.msoc-list-header-cell-');
+        this._runtime.buildCssRootSelector(currentColumnCssText, '.kGrid-operation-ReorderColumn');
+        currentColumnCssText.push('.kGrid-header-cell-');
         currentColumnCssText.push(this._reorderColumnId);
         currentColumnCssText.property(this._runtime.direction.front(), pointerToHeaderContentCoordinate.front() - headerCellRect.width / 2, 'px');
         currentColumnCssText.property('z-index', 1);
@@ -167,8 +167,8 @@ class GridReorderColumnOperation implements IOperation {
         currentColumnCssText.property('-khtml-opacity', 0.9);
         currentColumnCssText.property('opacity', 0.9);
 
-        this._runtime.buildCssRootSelector(currentColumnCssText, '.msoc-list-operation-ReorderColumn');
-        currentColumnCssText.push('.msoc-list-header-cell-v-border-');
+        this._runtime.buildCssRootSelector(currentColumnCssText, '.kGrid-operation-ReorderColumn');
+        currentColumnCssText.push('.kGrid-header-cell-v-border-');
         currentColumnCssText.push(this._reorderColumnId);
         currentColumnCssText.property('display', 'none');
 
@@ -210,8 +210,8 @@ class GridReorderColumnOperation implements IOperation {
 
                         var width = this._positionService.getColumnWidthByIndex(i);
 
-                        this._runtime.buildCssRootSelector(cssText, '.msoc-list-operation-ReorderColumn');
-                        cssText.push('.msoc-list-header-cell-');
+                        this._runtime.buildCssRootSelector(cssText, '.kGrid-operation-ReorderColumn');
+                        cssText.push('.kGrid-header-cell-');
                         cssText.push(this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(i));
                         cssText.property(this._runtime.direction.front(), front, 'px');
 

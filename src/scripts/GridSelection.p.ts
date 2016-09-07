@@ -38,7 +38,7 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
         this.selectionMode(SelectionMode.SingleRow);
 
         this.disposer.addDisposable(this._updaters = new Microsoft.Office.Controls.Fundamental.UpdaterGroup());
-        this.disposer.addDisposable(this._selectionStylesheet = new Microsoft.Office.Controls.Fundamental.DynamicStylesheet('msoc-list-selection-' + this._runtime.id));
+        this.disposer.addDisposable(this._selectionStylesheet = new Microsoft.Office.Controls.Fundamental.DynamicStylesheet('kGrid-selection-' + this._runtime.id));
         this._updaters.add(this._cursorUpdater = this._getCursorUpdater());
         this._updaters.add(this._selectionUpdater = this._getSelectionUpdater());
 
@@ -191,10 +191,10 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
                     style = newValue.style,
                     cursor = newValue.cursor,
                     canvas = $(this._viewportService.frontContentCanvas()),
-                    elements = canvas.find('.msoc-list-cursor');
+                    elements = canvas.find('.kGrid-cursor');
 
                 if (elements.length == 0) {
-                    elements = $('<div class="msoc-list-cursor"></div><div class="msoc-list-cursor"></div><div class="msoc-list-cursor"></div><div class="msoc-list-cursor"></div>');
+                    elements = $('<div class="kGrid-cursor"></div><div class="kGrid-cursor"></div><div class="kGrid-cursor"></div><div class="kGrid-cursor"></div>');
                     canvas.append(elements);
                 }
 
@@ -312,17 +312,17 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
                                 }
 
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-row.msoc-list-row-');
+                                cssText.push('.kGrid-row.kGrid-row-');
                                 cssText.push(rowId);
                                 cssText.push(',');
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-row.msoc-list-row-');
+                                cssText.push('.kGrid-row.kGrid-row-');
                                 cssText.push(rowId);
-                                cssText.push('>.msoc-list-content-cell,');
+                                cssText.push('>.kGrid-content-cell,');
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-row.msoc-list-row-');
+                                cssText.push('.kGrid-row.kGrid-row-');
                                 cssText.push(rowId);
-                                cssText.push(':hover>.msoc-list-content-cell');
+                                cssText.push(':hover>.kGrid-content-cell');
                                 cssText.property('background-color', color);
                             }
 
@@ -333,15 +333,15 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
                                 var columnId = visibleColumnIds[columnIndex];
 
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-header-canvas>.msoc-list-header-content-cell-');
+                                cssText.push('.kGrid-header-canvas>.kGrid-header-content-cell-');
                                 cssText.push(columnId);
                                 cssText.push(',');
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-row>.msoc-list-content-cell-');
+                                cssText.push('.kGrid-row>.kGrid-content-cell-');
                                 cssText.push(columnId);
                                 cssText.push(',');
                                 this._runtime.buildCssRootSelector(cssText);
-                                cssText.push('.msoc-list-row>.msoc-list-content-cell-');
+                                cssText.push('.kGrid-row>.kGrid-content-cell-');
                                 cssText.push(columnId);
                                 cssText.push(':hover');
                                 cssText.property('background-color', color);
@@ -360,15 +360,15 @@ export class GridSelection implements Fundamental.IFeature, Fundamental.IDisposa
                                     }
 
                                     this._runtime.buildCssRootSelector(cssText);
-                                    cssText.push('.msoc-list-row.msoc-list-row-');
+                                    cssText.push('.kGrid-row.kGrid-row-');
                                     cssText.push(rowId);
-                                    cssText.push('>.msoc-list-content-cell-');
+                                    cssText.push('>.kGrid-content-cell-');
                                     cssText.push(columnId);
                                     cssText.push(',');
                                     this._runtime.buildCssRootSelector(cssText);
-                                    cssText.push('.msoc-list-row.msoc-list-row-');
+                                    cssText.push('.kGrid-row.kGrid-row-');
                                     cssText.push(rowId);
-                                    cssText.push(':hover>.msoc-list-content-cell-');
+                                    cssText.push(':hover>.kGrid-content-cell-');
                                     cssText.push(columnId);
                                     cssText.property('background-color', color);
                                 }

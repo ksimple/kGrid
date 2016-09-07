@@ -39,7 +39,7 @@ export class Grid {
         this._runtime.events = {};
         this.disposer.addDisposable(this._runtime.events.internal = new Fundamental.EventSite());
         this.disposer.addDisposable(this._runtime.events.external = new Fundamental.EventSite());
-        this._runtime.rootClass = 'msoc-list-' + this._runtime.id;
+        this._runtime.rootClass = 'kGrid-' + this._runtime.id;
         this._runtime.direction = new Fundamental.TextDirection(Fundamental.TextDirection.LTR);
 
         // FIXME: initialize the injection

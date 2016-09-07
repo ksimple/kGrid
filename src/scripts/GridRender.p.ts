@@ -62,18 +62,18 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         this.disposer.addDisposable(this._renderingScheduler = new Fundamental.RenderingScheduler());
         this.disposer.addDisposable(this._updaters = new Fundamental.UpdaterGroup());
 
-        this.disposer.addDisposable(this._layoutStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('msoc-list-render-layout-' + this._runtime.id));
+        this.disposer.addDisposable(this._layoutStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('kGrid-render-layout-' + this._runtime.id));
         this._layoutStylesheetUpdater.add(() => this._getLayoutStylesheet());
         this._updaters.add(this._layoutStylesheetUpdater.getUpdater());
 
         this._updaters.add(this._getUIValuesUpdater());
         this._updaters.add(this._getRenderRangeUpdater());
 
-        this.disposer.addDisposable(this._cellStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('msoc-list-render-cell-' + this._runtime.id));
+        this.disposer.addDisposable(this._cellStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('kGrid-render-cell-' + this._runtime.id));
         this._cellStylesheetUpdater.add(() => this._getCellStylesheet());
         this._updaters.add(this._cellStylesheetUpdater.getUpdater());
 
-        this.disposer.addDisposable(this._rowTopStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('msoc-list-render-row-top-' + this._runtime.id));
+        this.disposer.addDisposable(this._rowTopStylesheetUpdater = new Fundamental.DynamicStylesheetUpdater('kGrid-render-row-top-' + this._runtime.id));
         this._rowTopStylesheetUpdater.add(() => this._getRowTopStylesheet());
         this._updaters.add(this._rowTopStylesheetUpdater.getUpdater());
 
@@ -117,20 +117,20 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             }));
 
         var root = $(
-            '<div class="msoc-list ' + runtime.rootClass + '" tabindex="0" aria-labelledby="msocListScreenReader_' + runtime.id + '">' +
-                '<div id="msocListScreenReader_' + runtime.id + '" class="msoc-list-screen-reader" aria-live="assertive"></div>' +
-                '<div class="msoc-list-header-viewport">' +
-                    '<div class="msoc-list-canvas-container">' +
-                        '<div class="msoc-list-canvas msoc-list-front"></div>' +
-                        '<div class="msoc-list-canvas msoc-list-canvas-primary"></div>' +
-                        '<div class="msoc-list-canvas msoc-list-back"></div>' +
+            '<div class="kGrid ' + runtime.rootClass + '" tabindex="0" aria-labelledby="kGridListScreenReader_' + runtime.id + '">' +
+                '<div id="kGridListScreenReader_' + runtime.id + '" class="kGrid-screen-reader" aria-live="assertive"></div>' +
+                '<div class="kGrid-header-viewport">' +
+                    '<div class="kGrid-canvas-container">' +
+                        '<div class="kGrid-canvas kGrid-front"></div>' +
+                        '<div class="kGrid-canvas kGrid-canvas-primary"></div>' +
+                        '<div class="kGrid-canvas kGrid-back"></div>' +
                     '</div>' +
                 '</div>' +
-                '<div class="msoc-list-content-viewport">' +
-                    '<div class="msoc-list-canvas-container">' +
-                        '<div class="msoc-list-canvas msoc-list-front"></div>' +
-                        '<div class="msoc-list-canvas msoc-list-canvas-primary"></div>' +
-                        '<div class="msoc-list-canvas msoc-list-back"></div>' +
+                '<div class="kGrid-content-viewport">' +
+                    '<div class="kGrid-canvas-container">' +
+                        '<div class="kGrid-canvas kGrid-front"></div>' +
+                        '<div class="kGrid-canvas kGrid-canvas-primary"></div>' +
+                        '<div class="kGrid-canvas kGrid-back"></div>' +
                     '</div>' +
                 '</div>' +
             '</div>');
@@ -140,22 +140,22 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         container.html('');
         container.append(root);
 
-        var header = root.find('>.msoc-list-header-viewport'),
-            content = root.find('>.msoc-list-content-viewport');
+        var header = root.find('>.kGrid-header-viewport'),
+            content = root.find('>.kGrid-content-viewport');
 
         this._elements = {
             root: root[0],
             header: {
                 viewport: header[0],
-                container: header.find('>.msoc-list-canvas-container')[0],
-                canvases: header.find('.msoc-list-canvas'),
-                mainCanvas: header.find('.msoc-list-canvas')[1],
+                container: header.find('>.kGrid-canvas-container')[0],
+                canvases: header.find('.kGrid-canvas'),
+                mainCanvas: header.find('.kGrid-canvas')[1],
             },
             content: {
                 viewport: content[0],
-                container: content.find('>.msoc-list-canvas-container')[0],
-                canvases: content.find('.msoc-list-canvas'),
-                mainCanvas: content.find('.msoc-list-canvas')[1],
+                container: content.find('>.kGrid-canvas-container')[0],
+                canvases: content.find('.kGrid-canvas'),
+                mainCanvas: content.find('.kGrid-canvas')[1],
             },
         };
 
@@ -211,13 +211,13 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
     private _getCellElementByEvent(event) {
         var cell;
 
-        cell = $(event.target).closest('.msoc-list-content-cell');
+        cell = $(event.target).closest('.kGrid-content-cell');
 
         if (cell[0]) {
             return cell[0];
         }
 
-        cell = $(event.target).closest('.msoc-list-header-cell');
+        cell = $(event.target).closest('.kGrid-header-cell');
 
         if (cell[0]) {
             return cell[0];
@@ -227,7 +227,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
     private _getCellPositionByEvent(event) {
         var cell;
 
-        cell = $(event.target).closest('.msoc-list-content-cell');
+        cell = $(event.target).closest('.kGrid-content-cell');
 
         if (cell[0]) {
             var rowId = cell.attr('data-rowId'),
@@ -241,7 +241,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             };
         }
 
-        cell = $(event.target).closest('.msoc-list-header-cell');
+        cell = $(event.target).closest('.kGrid-header-cell');
 
         if (cell[0]) {
             var columnId = cell.attr('data-columnId'),
@@ -368,12 +368,12 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
                     rowIndex = this._runtime.dataContexts.rowsDataContext.getRowIndexById(rowId);
 
                 if (!isNaN(rowIndex)) {
-                    rowElement.removeClass('msoc-list-odd msoc-list-even');
+                    rowElement.removeClass('kGrid-odd kGrid-even');
 
                     if (rowIndex % 2 == 1) {
-                        rowElement.addClass('msoc-list-odd');
+                        rowElement.addClass('kGrid-odd');
                     } else {
-                        rowElement.addClass('msoc-list-even');
+                        rowElement.addClass('kGrid-even');
                     }
                 }
             }
@@ -550,19 +550,19 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             direction: this._runtime.direction.rtl() ? 'rtl' : 'ltr',
         });
 
-        cssText.append(".$rootClass .msoc-list-header-cell { cursor: ${theme.texts['header.cell.cursor']}; font-family: ${theme.texts['header.cell.font-family']}; font-size: ${theme.texts['header.cell.font-size']}; background-color: ${theme.texts['header.row.background-color']}; color: ${theme.texts['header.cell.color']}; height: ${theme.texts['header.row.height']}; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell-content { top: 0px; $front: 0px; $end: 0px; padding: ${theme.values['header.cell.padding'][direction]}; height: ${theme.texts['header.row.height']}; line-height: ${theme.texts['header.row.height']}; }\n");
-        cssText.append(".$rootClass .msoc-list-row { height: ${theme.texts['content.row.height']}; display: none; }\n");
-        cssText.append(".$rootClass .msoc-list-row-border { height: ${theme.values['content.cell.border-bottom'].width}; width: 100%; border-bottom: ${theme.texts['content.cell.border-bottom']}; top: ${theme.texts['content.row.height']}; }\n");
-        cssText.append(".$rootClass .msoc-list-content-cell { cursor: ${theme.texts['content.cell.cursor']}; font-family: ${theme.texts['content.cell.font-family']}; font-size: ${theme.texts['content.cell.font-size']}; color: ${theme.texts['content.cell.color']}; height: ${theme.texts['content.row.height']}; display: none; }\n");
-        cssText.append(".$rootClass .msoc-list-odd { background-color: ${theme.texts['content.row:odd.background-color']}; }\n");
-        cssText.append(".$rootClass .msoc-list-even { background-color: ${theme.texts['content.row:even.background-color']}; }\n");
-        cssText.append(".$rootClass .msoc-list-header-bottom-border { height: ${theme.values['header.border-bottom'].width}; border-bottom: ${theme.texts['header.border-bottom']}; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell-splitter-front { $front: 0px; width: 2px; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell-first > .msoc-list-header-cell-splitter-front { display: none; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell-splitter-end { $end: -2px; width: 2px; }\n");
-        cssText.append(".$rootClass .msoc-list-content-cell-content { top: 0px; $front: 0px; $end: 0px; padding: ${theme.values['content.cell.padding'][direction]}; height: ${theme.texts['content.row.height']}; line-height: ${theme.texts['content.row.height']}; }\n");
-        cssText.append(".$rootClass .msoc-list-header-cell, .$rootClass .msoc-list-content-cell { display: none; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell { cursor: ${theme.texts['header.cell.cursor']}; font-family: ${theme.texts['header.cell.font-family']}; font-size: ${theme.texts['header.cell.font-size']}; background-color: ${theme.texts['header.row.background-color']}; color: ${theme.texts['header.cell.color']}; height: ${theme.texts['header.row.height']}; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell-content { top: 0px; $front: 0px; $end: 0px; padding: ${theme.values['header.cell.padding'][direction]}; height: ${theme.texts['header.row.height']}; line-height: ${theme.texts['header.row.height']}; }\n");
+        cssText.append(".$rootClass .kGrid-row { height: ${theme.texts['content.row.height']}; display: none; }\n");
+        cssText.append(".$rootClass .kGrid-row-border { height: ${theme.values['content.cell.border-bottom'].width}; width: 100%; border-bottom: ${theme.texts['content.cell.border-bottom']}; top: ${theme.texts['content.row.height']}; }\n");
+        cssText.append(".$rootClass .kGrid-content-cell { cursor: ${theme.texts['content.cell.cursor']}; font-family: ${theme.texts['content.cell.font-family']}; font-size: ${theme.texts['content.cell.font-size']}; color: ${theme.texts['content.cell.color']}; height: ${theme.texts['content.row.height']}; display: none; }\n");
+        cssText.append(".$rootClass .kGrid-odd { background-color: ${theme.texts['content.row:odd.background-color']}; }\n");
+        cssText.append(".$rootClass .kGrid-even { background-color: ${theme.texts['content.row:even.background-color']}; }\n");
+        cssText.append(".$rootClass .kGrid-header-bottom-border { height: ${theme.values['header.border-bottom'].width}; border-bottom: ${theme.texts['header.border-bottom']}; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell-splitter-front { $front: 0px; width: 2px; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell-first > .kGrid-header-cell-splitter-front { display: none; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell-splitter-end { $end: -2px; width: 2px; }\n");
+        cssText.append(".$rootClass .kGrid-content-cell-content { top: 0px; $front: 0px; $end: 0px; padding: ${theme.values['content.cell.padding'][direction]}; height: ${theme.texts['content.row.height']}; line-height: ${theme.texts['content.row.height']}; }\n");
+        cssText.append(".$rootClass .kGrid-header-cell, .$rootClass .kGrid-content-cell { display: none; }\n");
 
         return cssText.toString();
     }
@@ -595,7 +595,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             cssText.context().rowId = rowId;
             cssText.context().rowIndex = rowIndex;
 
-            cssText.append(".$rootClass .msoc-list-row.msoc-list-row-$rowId { height: ${theme.texts['content.row.height']}; line-height: ${theme.texts['content.row.height']}; top: ${(rowIndex * theme.values['content.row.height'].number + rowIndex * theme.values['content.cell.border-bottom'].number)}px; display: block; }\n");
+            cssText.append(".$rootClass .kGrid-row.kGrid-row-$rowId { height: ${theme.texts['content.row.height']}; line-height: ${theme.texts['content.row.height']}; top: ${(rowIndex * theme.values['content.row.height'].number + rowIndex * theme.values['content.cell.border-bottom'].number)}px; display: block; }\n");
         }
 
         $.each(visibleColumnIds, (index, columnId) => {
@@ -604,10 +604,10 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
                 cssText.context().columnId = columnId;
                 cssText.context().frontWidth = front;
 
-                cssText.append(".$rootClass .msoc-list-header-cell.msoc-list-header-cell-$columnId, .$rootClass .msoc-list-content-cell.msoc-list-content-cell-$columnId { $front: ${frontWidth}px; width: ${width}px; display: block; }\n");
+                cssText.append(".$rootClass .kGrid-header-cell.kGrid-header-cell-$columnId, .$rootClass .kGrid-content-cell.kGrid-content-cell-$columnId { $front: ${frontWidth}px; width: ${width}px; display: block; }\n");
 
                 if (index != visibleColumnIds.length - 1) {
-                    cssText.append(".$rootClass .msoc-list-header-cell-v-border-$columnId { $front: ${width}px; width: ${theme.values['content.cell.border-right'].width}; border-$end: ${theme.values['header.cell.border-right'].width}; }\n");
+                    cssText.append(".$rootClass .kGrid-header-cell-v-border-$columnId { $front: ${width}px; width: ${theme.values['content.cell.border-right'].width}; border-$end: ${theme.values['header.cell.border-right'].width}; }\n");
                 }
             }
 
@@ -632,18 +632,18 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         });
 
         cssText.append('.$rootClass { width: ${runtime.width}px; height: ${runtime.height}px; background-color: ${theme.texts["background-color"]}; }\n');
-        cssText.append('.$rootClass .msoc-list-content-viewport { overflow: auto; position: absolute; top: ${canvas.content.top}px; $front: 0px; $end: 0px; bottom: 0px; }\n');
-        cssText.append('.$rootClass .msoc-list-content-viewport .msoc-list-canvas-container { overflow: hidden; position: relative; width: ${canvas.content.width}px; height: ${canvas.content.height}px; min-width: ${minCanvasWidth}px; }\n');
-        cssText.append('.$rootClass .msoc-list-canvas.msoc-list-front { z-index: 100; }\n');
-        cssText.append('.$rootClass .msoc-list-canvas.msoc-list-back { z-index: 100; }\n');
+        cssText.append('.$rootClass .kGrid-content-viewport { overflow: auto; position: absolute; top: ${canvas.content.top}px; $front: 0px; $end: 0px; bottom: 0px; }\n');
+        cssText.append('.$rootClass .kGrid-content-viewport .kGrid-canvas-container { overflow: hidden; position: relative; width: ${canvas.content.width}px; height: ${canvas.content.height}px; min-width: ${minCanvasWidth}px; }\n');
+        cssText.append('.$rootClass .kGrid-canvas.kGrid-front { z-index: 100; }\n');
+        cssText.append('.$rootClass .kGrid-canvas.kGrid-back { z-index: 100; }\n');
 
         // FIXME: should put here?
-        cssText.append(".$rootClass .msoc-list-row { width: ${canvas.content.width}px; min-width: ${minCanvasWidth}px; }\n");
-        cssText.append('.$rootClass .msoc-list-header-viewport { overflow: hidden; position: absolute; width: 100%; height: ${canvas.content.top}px; }\n');
-        cssText.append('.$rootClass .msoc-list-header-viewport .msoc-list-canvas-container { overflow: hidden; position: relative; width: ${canvas.header.width}px; height: ${canvas.header.height}px; min-width: ${minCanvasWidth}px; }\n');
-        cssText.append('.$rootClass .msoc-list-row:hover > .msoc-list-content-cell { background-color: ${theme.texts["content.row:hover.background-color"]}; }');
+        cssText.append(".$rootClass .kGrid-row { width: ${canvas.content.width}px; min-width: ${minCanvasWidth}px; }\n");
+        cssText.append('.$rootClass .kGrid-header-viewport { overflow: hidden; position: absolute; width: 100%; height: ${canvas.content.top}px; }\n');
+        cssText.append('.$rootClass .kGrid-header-viewport .kGrid-canvas-container { overflow: hidden; position: relative; width: ${canvas.header.width}px; height: ${canvas.header.height}px; min-width: ${minCanvasWidth}px; }\n');
+        cssText.append('.$rootClass .kGrid-row:hover > .kGrid-content-cell { background-color: ${theme.texts["content.row:hover.background-color"]}; }');
 
-        // cssText.append('.$rootClass .msoc-list-header-viewport .msoc-list-canvas-container.msoc-list-canvas-main > .msoc-list-header-bottom-border');
+        // cssText.append('.$rootClass .kGrid-header-viewport .kGrid-canvas-container.kGrid-canvas-main > .kGrid-header-bottom-border');
 
         return cssText.toString();
     }
@@ -756,11 +756,11 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
 
                 html.context().columnId = columnId;
 
-                html.append('<div class="msoc-list-header-cell msoc-list-header-cell-$columnId" data-rowId="0" data-columnId="$columnId">');
-                html.append('<div class="msoc-list-header-cell-content msoc-list-header-cell-content-$columnId"></div>');
-                html.append('<div class="msoc-list-header-cell-v-border msoc-list-header-cell-v-border-$columnId"></div>');
-                html.append('<div class="msoc-list-header-cell-splitter msoc-list-header-cell-splitter-front"></div>');
-                html.append('<div class="msoc-list-header-cell-splitter msoc-list-header-cell-splitter-end"></div>');
+                html.append('<div class="kGrid-header-cell kGrid-header-cell-$columnId" data-rowId="0" data-columnId="$columnId">');
+                html.append('<div class="kGrid-header-cell-content kGrid-header-cell-content-$columnId"></div>');
+                html.append('<div class="kGrid-header-cell-v-border kGrid-header-cell-v-border-$columnId"></div>');
+                html.append('<div class="kGrid-header-cell-splitter kGrid-header-cell-splitter-front"></div>');
+                html.append('<div class="kGrid-header-cell-splitter kGrid-header-cell-splitter-end"></div>');
                 html.append('</div>');
 
                 addedColumnIds.push(columnId);
@@ -772,7 +772,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
         if (headerCellHtml.length > 0) {
             headerMainCanvas[0].insertAdjacentHTML('beforeend', headerCellHtml);
 
-            var contentElements = headerMainCanvas.find('> .msoc-list-header-cell > .msoc-list-header-cell-content');
+            var contentElements = headerMainCanvas.find('> .kGrid-header-cell > .kGrid-header-cell-content');
 
             for (var i = 0; i < addedColumnIds.length; i++) {
                 var columnId = addedColumnIds[i];
@@ -834,13 +834,13 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
 
             if (context.content.rows[rowId].state == RenderState.Initial) {
                 if (rowIndex % 2 == 1) {
-                    html.append('<div class="msoc-list-row msoc-list-row-$rowId msoc-list-odd" data-rowId="$rowId">');
+                    html.append('<div class="kGrid-row kGrid-row-$rowId kGrid-odd" data-rowId="$rowId">');
                 } else {
-                    html.append('<div class="msoc-list-row msoc-list-row-$rowId msoc-list-even" data-rowId="$rowId">');
+                    html.append('<div class="kGrid-row kGrid-row-$rowId kGrid-even" data-rowId="$rowId">');
                 }
 
                 if (rowIndex != this._runtime.dataContexts.rowsDataContext.rowCount() - 1) {
-                    html.append('<div class="msoc-list-row-border"></div>');
+                    html.append('<div class="kGrid-row-border"></div>');
                 }
 
                 html.append('</div>');
@@ -872,8 +872,8 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
                         contentElement: null,
                     };
 
-                    html.append('<div class="msoc-list-content-cell msoc-list-content-cell-$columnId" data-rowId="$rowId" data-columnId="$columnId">');
-                    html.append('<div class="msoc-list-content-cell-content msoc-list-content-cell-content-$columnId"></div>');
+                    html.append('<div class="kGrid-content-cell kGrid-content-cell-$columnId" data-rowId="$rowId" data-columnId="$columnId">');
+                    html.append('<div class="kGrid-content-cell-content kGrid-content-cell-content-$columnId"></div>');
                     html.append('</div>');
 
                     addedColumnIds.push(columnId);
@@ -885,7 +885,7 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             if (cellHtml.length > 0) {
                 rowElement[0].insertAdjacentHTML('beforeend', html.toString());
 
-                var contentElements = rowElement.find('> .msoc-list-content-cell > div');
+                var contentElements = rowElement.find('> .kGrid-content-cell > div');
 
                 for (var i = 0; i < addedColumnIds.length; i++) {
                     var columnId = addedColumnIds[i];

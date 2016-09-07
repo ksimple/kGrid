@@ -24,7 +24,7 @@ class GridResizeColumnOperation implements IOperation {
         this.disposer = new Fundamental.Disposer(() => {
             this._splitters[0].remove();
             this._splitters[1].remove();
-            this._headerCellElement.removeClass('msoc-list-header-cell-resizing');
+            this._headerCellElement.removeClass('kGrid-header-cell-resizing');
             this._headerCellElement.attr('style', '');
         });
 
@@ -51,11 +51,11 @@ class GridResizeColumnOperation implements IOperation {
         this._initialFront = headerCellRect.front;
         this._initialWidth = this._lastWidth = headerCellRect.width;
         this._baseScrollCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.headerViewport()));
-        this._headerCellElement.addClass('msoc-list-header-cell-resizing');
+        this._headerCellElement.addClass('kGrid-header-cell-resizing');
         this.disposer.addDisposable(new Fundamental.EventAttacher($(window), this._isTouch ? 'touchend' : 'mouseup', (event) => this._onPointerUp(event)));
         this.disposer.addDisposable(new Fundamental.EventAttacher($(window), this._isTouch ? 'touchmove' : 'mousemove', (event) => this._onPointerMove(event)));
 
-        this._splitters = [$('<div class="msoc-list-resizer"></div>'), $('<div class="msoc-list-resizer"></div>')];
+        this._splitters = [$('<div class="kGrid-resizer"></div>'), $('<div class="kGrid-resizer"></div>')];
         $(this._viewportService.frontHeaderCanvas()).append(this._splitters[0]);
         $(this._viewportService.frontContentCanvas()).append(this._splitters[1]);
         var scrollFrontCoordinate = Microsoft.Office.Controls.Fundamental.CoordinateFactory.scrollFromElement(this._rtl, $(this._viewportService.headerViewport()));
