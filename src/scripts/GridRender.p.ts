@@ -104,17 +104,19 @@ export class GridRender implements Fundamental.IFeature, Fundamental.IDisposable
             new Fundamental.EventAttacher(
                 this._runtime.dataContexts.columnsDataContext,
                 'visibleColumnIdsChange',
-                (args) => {
-                    this._updaters.update();
-            }));
+                (args) => this._updaters.update()));
+
+        this.disposer.addDisposable(
+            new Fundamental.EventAttacher(
+                this._runtime.dataContexts.columnsDataContext,
+                'columnsChange',
+                (args) => this._updaters.update()));
 
         this.disposer.addDisposable(
             new Fundamental.EventAttacher(
                 this._runtime.dataContexts.rowsDataContext,
                 'rowCountChange',
-                (args) => {
-                    this._updaters.update();
-            }));
+                (args) => this._updaters.update()));
 
         var root = $(
             '<div class="kGrid ' + runtime.rootClass + '" tabindex="0" aria-labelledby="kGridListScreenReader_' + runtime.id + '">' +

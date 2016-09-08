@@ -39,7 +39,7 @@ class GridReorderColumn implements Fundamental.IFeature {
             return;
         }
 
-        var headerCellSplitterElement = $(event.target).closest('.msoc-list-header-cell-splitter');
+        var headerCellSplitterElement = $(event.target).closest('.kGrid-header-cell-splitter');
 
         if (headerCellSplitterElement.length > 0) {
             return;

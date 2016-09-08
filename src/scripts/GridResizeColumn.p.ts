@@ -59,11 +59,10 @@ class GridResizeColumn implements Fundamental.IFeature {
         return this._operatorService.start(name, new GridResizeColumnOperation(isTouch, pointerId, coordinate, headerCellElement, headerCellPosition.position.columnIndex))
         .done(newWidth => {
             var columnIndex = headerCellPosition.position.columnIndex;
+            var columnId = this._runtime.dataContexts.columnsDataContext.getColumnIdByIndex(columnIndex);
+
             GridResizeColumn.logger.info('column ' + columnIndex + ' resized to ' + newWidth + 'px');
-            // column.table.width = width;
-            // this._updateColumnPosition();
-            // this._invalidateColumn(columnUniqueId);
-            // this._runtime.updateUI(1);
+            this._runtime.dataContexts.columnsDataContext.column({ id: columnId, width: newWidth });
         });
     }
 }

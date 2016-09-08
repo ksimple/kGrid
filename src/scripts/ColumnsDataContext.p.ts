@@ -42,7 +42,7 @@ export class ColumnsDataContext {
 
             this._columns[columnId] = {
                 columnId: columnId,
-                raw: columnDefinition,
+                raw: $.extend({}, columnDefinition),
             };
 
             columnIds.push(columnId);
@@ -100,6 +100,26 @@ export class ColumnsDataContext {
         } else {
             return this._visibleColumnIds.slice(0);
         }
+    }
+
+    public column(columnDefinitions) {
+        if (!(columnDefinitions instanceof Array)) {
+            columnDefinitions = [columnDefinitions];
+        }
+        for (var index = 0; index < columnDefinitions.length; index++) {
+            var columnDefinition = columnDefinitions[index];
+            var column = this._columns[columnDefinition.id];
+
+            if (!column) {
+                throw Fundamental.createError(0, 'ColumnsDataContext', 'cannot find column');
+            }
+
+            if (columnDefinition.width) {
+                column.raw.width = columnDefinition.width;
+            }
+        }
+
+        this._events.emit('columnsChange', null);
     }
 
     private hideColumnByIndex(columnIndex) {
